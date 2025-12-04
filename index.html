@@ -16,7 +16,11 @@
   <!-- SheetJS لتصدير Excel -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
+  <!-- مكتبة ZXing للباركود (بدون eval) -->
+  <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+
   <style>
+    /* نفس الستايل السابق... */
     body {
       background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
       color: #ffffff;
@@ -184,11 +188,29 @@
       background: #fff;
       padding: 1rem;
       margin-bottom: 1rem;
+      position: relative;
     }
     
     #videoElement {
       width: 100%;
       border-radius: 8px;
+      max-height: 300px;
+    }
+
+    .scan-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 2px;
+      background: #4caf50;
+      animation: scan 2s infinite linear;
+    }
+
+    @keyframes scan {
+      0% { top: 10%; }
+      100% { top: 90%; }
     }
 
     .display-6 {
@@ -210,17 +232,6 @@
         padding: 0.4rem 0.8rem;
         font-size: 0.9rem;
       }
-    }
-
-    .scanner-active {
-      border: 3px solid #4caf50 !important;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
     }
   </style>
 </head>
@@ -338,7 +349,7 @@
         <div class="card-body">
           <div id="scannerWrapper" class="d-none">
             <video id="videoElement" autoplay playsinline></video>
-            <canvas id="canvasElement" style="display: none;"></canvas>
+            <div class="scan-overlay"></div>
             <button class="btn btn-danger w-100 mt-3" id="btnCloseScanner">إيقاف السكان</button>
           </div>
           <div id="scannerPlaceholder" class="text-center">
@@ -677,6 +688,7 @@
   let todaySalesCache = {};
   let scannerStream = null;
   let scannerActive = false;
+  let codeReader = null;
 
   /* تحميل المنتجات */
   onValue(ref(db, 'products'), snapshot => {
@@ -1062,143 +1074,64 @@
     }
   });
 
-  /* سكان الباركود - إصدار مبسط بدون مكتبات خارجية */
+  /* سكان الباركود باستخدام ZXing (بدون eval) */
   const scannerWrapper = document.getElementById("scannerWrapper");
   const scannerPlaceholder = document.getElementById("scannerPlaceholder");
   const btnOpenScanner = document.getElementById("btnOpenScanner");
   const btnSaleScanner = document.getElementById("btnSaleScanner");
   const btnCloseScanner = document.getElementById("btnCloseScanner");
   const videoElement = document.getElementById("videoElement");
-  const canvasElement = document.getElementById("canvasElement");
 
   // دالة لفتح الماسح
-  function openScanner(mode) {
+  async function openScanner(mode) {
     if (scannerActive) return;
     
-    scannerPlaceholder.classList.add("d-none");
-    scannerWrapper.classList.remove("d-none");
-    scannerWrapper.classList.add("scanner-active");
-    scannerActive = true;
-    
-    // طلب إذن الكاميرا
-    navigator.mediaDevices.getUserMedia({ 
-      video: { facingMode: "environment" } 
-    }).then(function(stream) {
+    try {
+      scannerPlaceholder.classList.add("d-none");
+      scannerWrapper.classList.remove("d-none");
+      scannerActive = true;
+      
+      // طلب إذن الكاميرا
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: "environment" } 
+      });
+      
       scannerStream = stream;
       videoElement.srcObject = stream;
-      videoElement.play();
       
-      // بدأ المسح التلقائي للباركود
-      startBarcodeScan(mode);
-    }).catch(function(err) {
-      alert("خطأ في تشغيل الكاميرا: " + err.message);
-      closeScanner();
-    });
-  }
-
-  // دالة مبسطة لقراءة الباركود (للأكواد البسيطة)
-  function startBarcodeScan(mode) {
-    const canvas = canvasElement;
-    const ctx = canvas.getContext('2d');
-    
-    function scan() {
-      if (!scannerActive) return;
+      // تهيئة ZXing
+      const codeReader = new ZXing.BrowserQRCodeReader();
       
-      try {
-        canvas.width = videoElement.videoWidth;
-        canvas.height = videoElement.videoHeight;
-        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-        
-        // قراءة الباركود يدوياً (نسخة مبسطة)
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const barcode = tryReadBarcode(imageData);
-        
-        if (barcode) {
+      // بدأ المسح
+      codeReader.decodeFromVideoDevice(null, videoElement, (result, err) => {
+        if (result) {
+          const barcode = result.text;
+          
           if (mode === 'product') {
             productBarcodeInput.value = barcode;
           } else if (mode === 'sale') {
             saleBarcodeInput.value = barcode;
             loadProductByBarcode(barcode);
           }
+          
           alert("تم قراءة الباركود: " + barcode);
           closeScanner();
-          return;
         }
         
-        // الاستمرار في المسح
-        requestAnimationFrame(scan);
-      } catch (err) {
-        console.log("خطأ في المسح:", err);
-        requestAnimationFrame(scan);
-      }
+        if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.log("خطأ في القراءة:", err);
+        }
+      });
+      
+    } catch (err) {
+      alert("خطأ في تشغيل الكاميرا: " + err.message);
+      closeScanner();
     }
-    
-    scan();
-  }
-
-  // محاولة قراءة باركود مبسطة
-  function tryReadBarcode(imageData) {
-    // هذه نسخة مبسطة - في الإنتاج استخدم مكتبة متخصصة
-    // هنا نكتشف الأعمدة السوداء والبيضاء
-    const data = imageData.data;
-    const width = imageData.width;
-    const height = imageData.height;
-    
-    // نأخذ خط في منتصف الصورة
-    const middleY = Math.floor(height / 2);
-    const row = [];
-    
-    for (let x = 0; x < width; x++) {
-      const pixelIndex = (middleY * width + x) * 4;
-      const r = data[pixelIndex];
-      const g = data[pixelIndex + 1];
-      const b = data[pixelIndex + 2];
-      const brightness = (r + g + b) / 3;
-      row.push(brightness < 128 ? 1 : 0); // 1 لأسود، 0 لأبيض
-    }
-    
-    // محاولة اكتشاف أنماط بسيطة
-    const pattern = detectSimplePattern(row);
-    if (pattern) {
-      return pattern;
-    }
-    
-    return null;
-  }
-
-  function detectSimplePattern(row) {
-    // هذا مثال مبسط - يمكن توسيعه
-    let current = row[0];
-    let count = 1;
-    const pattern = [];
-    
-    for (let i = 1; i < row.length; i++) {
-      if (row[i] === current) {
-        count++;
-      } else {
-        pattern.push(count);
-        current = row[i];
-        count = 1;
-      }
-    }
-    pattern.push(count);
-    
-    // إذا كان لدينا نمط بسيط
-    if (pattern.length > 4) {
-      // تحويل النمط إلى سلسلة
-      const code = pattern.map(p => p > 10 ? '2' : '1').join('');
-      if (code.length > 5) {
-        return "SCANNED-" + Date.now().toString().slice(-6);
-      }
-    }
-    
-    return null;
   }
 
   // إغلاق الماسح
   function closeScanner() {
     scannerActive = false;
-    scannerWrapper.classList.remove("scanner-active");
     
     if (scannerStream) {
       scannerStream.getTracks().forEach(track => track.stop());
