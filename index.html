@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>برنامج الحسن للهواتف المحمولة</title>
-    
+
     <!-- Bootstrap 5.3 RTL -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -17,28 +18,28 @@
             --light-color: #ecf0f1;
             --dark-color: #2c3e50;
         }
-        
+
         body {
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding-bottom: 20px;
         }
-        
+
         .header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 20px 0;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             border-radius: 0 0 15px 15px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
+
         .header-datetime {
             font-size: 0.95rem;
             opacity: 0.95;
             font-weight: 500;
         }
-        
+
         .card {
             border: none;
             border-radius: 12px;
@@ -46,11 +47,11 @@
             margin-bottom: 20px;
             transition: transform 0.3s;
         }
-        
+
         .card:hover {
             transform: translateY(-5px);
         }
-        
+
         .card-header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
@@ -58,7 +59,7 @@
             padding: 15px 20px;
             font-weight: bold;
         }
-        
+
         .stat-card {
             text-align: center;
             padding: 20px;
@@ -66,31 +67,31 @@
             color: white;
             margin-bottom: 15px;
         }
-        
+
         .stat-card-1 { background: linear-gradient(135deg, #27ae60, #2ecc71); }
         .stat-card-2 { background: linear-gradient(135deg, #2980b9, #3498db); }
         .stat-card-3 { background: linear-gradient(135deg, #e67e22, #f39c12); }
         .stat-card-4 { background: linear-gradient(135deg, #c0392b, #e74c3c); }
         .stat-card-5 { background: linear-gradient(135deg, #8e44ad, #9b59b6); }
-        
+
         .stat-card h2 {
             margin: 0;
             font-size: 2rem;
             font-weight: bold;
         }
-        
+
         .stat-card p {
             margin: 5px 0 0 0;
             font-size: 0.95rem;
         }
-        
+
         .monthly-stats-section {
             background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
         }
-        
+
         .monthly-stat-item {
             text-align: center;
             padding: 15px;
@@ -100,79 +101,79 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             min-width: 150px;
         }
-        
+
         .monthly-stat-item strong {
             display: block;
             color: #7f8c8d;
             font-size: 0.9rem;
             margin-bottom: 8px;
         }
-        
+
         .monthly-stat-item .value {
             display: block;
             color: #2c3e50;
             font-size: 1.8rem;
             font-weight: bold;
         }
-        
+
         .btn {
             border-radius: 8px;
             padding: 8px 20px;
             font-weight: 600;
         }
-        
+
         .btn-primary {
             background-color: var(--secondary-color);
             border-color: var(--secondary-color);
         }
-        
+
         .btn-success {
             background-color: var(--success-color);
             border-color: var(--success-color);
         }
-        
+
         .btn-warning {
             background-color: var(--warning-color);
             border-color: var(--warning-color);
         }
-        
+
         .btn-danger {
             background-color: var(--danger-color);
             border-color: var(--danger-color);
         }
-        
+
         .table {
             background-color: white;
             border-radius: 8px;
             overflow: hidden;
         }
-        
+
         .table thead th {
             background-color: #f1f8ff;
             border-bottom: 2px solid #dee2e6;
             font-weight: 700;
         }
-        
+
         .form-control, .form-select {
             border-radius: 8px;
             border: 1px solid #ddd;
             padding: 10px 15px;
         }
-        
+
         .form-control:focus, .form-select:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
         }
-        
+
         .badge {
             padding: 5px 10px;
             border-radius: 20px;
             font-weight: 600;
         }
-        
+
         .low-stock { background-color: #fff3cd !important; }
         .out-stock { background-color: #f8d7da !important; }
-        
+
         @media (max-width: 768px) {
             .header h1 { font-size: 1.5rem; }
             .stat-card h2 { font-size: 1.5rem; }
@@ -181,6 +182,80 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
+        }
+
+        /* شبكة الأيقونات الرئيسية */
+        .main-menu {
+            margin: 10px 0 20px 0;
+        }
+
+        .menu-tile {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .menu-tile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .menu-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* النوافذ العائمة */
+        .floating-panel-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+        }
+
+        .floating-panel {
+            background: #ffffff;
+            border-radius: 14px;
+            max-width: 1100px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 15px;
+        }
+
+        .floating-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .floating-panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .floating-panel-close {
+            border: none;
+            background: transparent;
+            font-size: 1.4rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -210,8 +285,9 @@
     </div>
 
     <div class="container">
-        <!-- Statistics Cards (اليوم) -->
-        <div class="row mb-4">
+
+        <!-- كروت الإحصائيات اليومية -->
+        <div class="row mb-3">
             <div class="col-md-3 col-sm-6">
                 <div class="stat-card stat-card-1">
                     <h2 id="todayProfit">0</h2>
@@ -267,282 +343,387 @@
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="row">
-            <!-- Left Column - Product Management -->
-            <div class="col-lg-4">
-                <!-- Add/Edit Product -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">إضافة / تعديل منتج</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="productForm">
-                            <input type="hidden" id="productId">
-                            
-                            <div class="mb-3">
-                                <label for="productName" class="form-label">اسم المنتج</label>
-                                <input type="text" class="form-control" id="productName" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="productBarcode" class="form-label">باركود / كود المنتج</label>
-                                <input type="text" class="form-control" id="productBarcode" placeholder="اكتب الكود يدويًا (اختياري)">
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="productCost" class="form-label">سعر الجملة</label>
-                                    <input type="number" step="0.01" class="form-control" id="productCost" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="productQty" class="form-label">الكمية</label>
-                                    <input type="number" class="form-control" id="productQty" required>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="productMinStock" class="form-label">حد تنبيه المخزون</label>
-                                <input type="number" class="form-control" id="productMinStock" value="1">
-                            </div>
-                            
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-success">💾 حفظ المنتج</button>
-                                <button type="button" class="btn btn-secondary" id="btnResetProduct">🔄 تفريغ الحقول</button>
-                            </div>
-                        </form>
+        <!-- القائمة الرئيسية بالأيقونات -->
+        <div class="main-menu">
+            <div class="row g-3">
+                <div class="col-4 col-md-2">
+                    <div class="menu-tile" data-panel="panel-sales">
+                        <span class="menu-icon">💰</span>
+                        <span class="menu-title">المبيعات</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Middle Column - Products Table -->
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">📋 قائمة المنتجات والمخزون</h5>
-                        <div>
-                            <button class="btn btn-sm btn-outline-secondary me-2" onclick="printSection('productsTable')">🖨 طباعة</button>
-                            <button class="btn btn-sm btn-outline-success" onclick="exportToExcel('productsTable', 'المنتجات')">📄 Excel</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" id="searchName" placeholder="🔍 بحث بالاسم">
-                            </div>
-                            <div class="col-md-6 mt-2 mt-md-0">
-                                <input type="text" class="form-control" id="searchBarcode" placeholder="🔍 بحث بالكود">
-                            </div>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="productsTable">
-                                <thead>
-                                    <tr>
-                                        <th>الاسم</th>
-                                        <th>الكود</th>
-                                        <th>سعر الجملة</th>
-                                        <th>المتوفر</th>
-                                        <th>حد التنبيه</th>
-                                        <th>الحالة</th>
-                                        <th>إدارة</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="productsBody">
-                                    <!-- سيتم ملؤها جافاسكريبت -->
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="col-4 col-md-2">
+                    <div class="menu-tile" data-panel="panel-stock">
+                        <span class="menu-icon">📦</span>
+                        <span class="menu-title">المخزون</span>
                     </div>
                 </div>
-
-                <!-- Low Stock Products -->
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="mb-0">⚠️ منتجات أوشكت على النفاد</h5>
+                <div class="col-4 col-md-2">
+                    <div class="menu-tile" data-panel="panel-moves">
+                        <span class="menu-icon">🔁</span>
+                        <span class="menu-title">حركات المخزون</span>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" style="max-height: 200px;">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>اسم المنتج</th>
-                                        <th>الكود</th>
-                                        <th>المتبقي</th>
-                                        <th>الحالة</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="lowStockBody">
-                                    <!-- سيتم ملؤها جافاسكريبت -->
-                                </tbody>
-                            </table>
-                        </div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="menu-tile" data-panel="panel-stats">
+                        <span class="menu-icon">📊</span>
+                        <span class="menu-title">التقارير</span>
+                    </div>
+                </div>
+                <div class="col-4 col-md-2">
+                    <div class="menu-tile" data-panel="panel-purchase">
+                        <span class="menu-icon">🛒</span>
+                        <span class="menu-title">المشتريات</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Second Row - Sales and Stock Management -->
-        <div class="row mt-4">
-            <!-- Sales Form -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">💰 بيع منتج</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="saleForm">
-                            <div class="mb-3">
-                                <label for="saleBarcode" class="form-label">كود المنتج</label>
-                                <input type="text" class="form-control" id="saleBarcode" placeholder="اكتب الكود يدويًا">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="saleProductName" class="form-label">اسم المنتج</label>
-                                <input type="text" class="form-control" id="saleProductName" readonly>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="saleCost" class="form-label">سعر الجملة</label>
-                                    <input type="number" class="form-control" id="saleCost" readonly>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="saleAvailableQty" class="form-label">المتوفر</label>
-                                    <input type="number" class="form-control" id="saleAvailableQty" readonly>
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="salePrice" class="form-label">سعر البيع</label>
-                                    <input type="number" step="0.01" class="form-control" id="salePrice" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="saleQty" class="form-label">الكمية المباعة</label>
-                                    <input type="number" class="form-control" id="saleQty" required value="1">
-                                </div>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-success w-100">✅ تسجيل عملية البيع</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    </div> <!-- /container الرئيسية (تبقى خفيفة) -->
 
-            <!-- Stock Movement -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">📦 حركة المخزون</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="stockMoveForm">
-                            <div class="mb-3">
-                                <label for="moveBarcode" class="form-label">كود المنتج</label>
-                                <input type="text" class="form-control" id="moveBarcode" placeholder="كود المنتج">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="moveType" class="form-label">نوع الحركة</label>
-                                <select class="form-select" id="moveType">
-                                    <option value="in">دخول (شراء / إضافة)</option>
-                                    <option value="out">خروج (تسوية / تلف)</option>
-                                </select>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="moveQty" class="form-label">الكمية</label>
-                                <input type="number" class="form-control" id="moveQty" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="moveNote" class="form-label">ملاحظات</label>
-                                <textarea class="form-control" id="moveNote" rows="2"></textarea>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-warning w-100">📝 تسجيل حركة المخزون</button>
-                        </form>
-                    </div>
-                </div>
+    <!-- نافذة عائمة للمخزون -->
+    <div class="floating-panel-backdrop" id="panel-stock">
+        <div class="floating-panel">
+            <div class="floating-panel-header">
+                <span class="floating-panel-title">إدارة المخزون</span>
+                <button class="floating-panel-close" data-close-panel>&times;</button>
             </div>
+            <div class="floating-panel-body">
+                <div class="row">
+                    <!-- إضافة / تعديل منتج -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">إضافة / تعديل منتج</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="productForm">
+                                    <input type="hidden" id="productId">
 
-            <!-- Today's Sales -->
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">📊 مبيعات اليوم</h5>
-                        <div>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="printSection('salesTable')">🖨</button>
-                            <button class="btn btn-sm btn-outline-success" onclick="exportToExcel('salesTable', 'مبيعات_اليوم')">📄</button>
+                                    <div class="mb-3">
+                                        <label for="productName" class="form-label">اسم المنتج</label>
+                                        <input type="text" class="form-control" id="productName" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productBarcode" class="form-label">باركود / كود المنتج</label>
+                                        <input type="text" class="form-control" id="productBarcode" placeholder="اكتب الكود يدويًا (اختياري)">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="productCost" class="form-label">سعر الجملة</label>
+                                            <input type="number" step="0.01" class="form-control" id="productCost" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="productQty" class="form-label">الكمية</label>
+                                            <input type="number" class="form-control" id="productQty" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="productMinStock" class="form-label">حد تنبيه المخزون</label>
+                                        <input type="number" class="form-control" id="productMinStock" value="1">
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-success">💾 حفظ المنتج</button>
+                                        <button type="button" class="btn btn-secondary" id="btnResetProduct">🔄 تفريغ الحقول</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive" style="max-height: 300px;">
-                            <table class="table table-sm" id="salesTable">
-                                <thead>
-                                    <tr>
-                                        <th>التاريخ والوقت</th>
-                                        <th>المنتج</th>
-                                        <th>الكمية</th>
-                                        <th>سعر البيع</th>
-                                        <th>الربح</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="salesBody">
-                                    <!-- سيتم ملؤها جافاسكريبت -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Stock Moves History -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">🔄 آخر حركات المخزون</h5>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="printSection('stockMovesTable')">🖨 طباعة</button>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-sm" id="stockMovesTable">
-                                <thead>
-                                    <tr>
-                                        <th>التاريخ</th>
-                                        <th>الوقت</th>
-                                        <th>الكود</th>
-                                        <th>نوع الحركة</th>
-                                        <th>الكمية</th>
-                                        <th>ملاحظات</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="stockMovesBody">
-                                    <!-- سيتم ملؤها جافاسكريبت -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <!-- جدول المنتجات + منخفضة المخزون -->
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">📋 قائمة المنتجات والمخزون</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="printSection('productsTable')">🖨 طباعة</button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="exportToExcel('productsTable', 'المنتجات')">📄 Excel</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" id="searchName" placeholder="🔍 بحث بالاسم">
+                                    </div>
+                                    <div class="col-md-6 mt-2 mt-md-0">
+                                        <input type="text" class="form-control" id="searchBarcode" placeholder="🔍 بحث بالكود">
+                                    </div>
+                                </div>
 
-        <!-- Developer Info -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    <small>تم تطوير هذا البرنامج بواسطة مهندس محمد حماد</small>
-                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="productsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>الاسم</th>
+                                                <th>الكود</th>
+                                                <th>سعر الجملة</th>
+                                                <th>المتوفر</th>
+                                                <th>حد التنبيه</th>
+                                                <th>الحالة</th>
+                                                <th>إدارة</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="productsBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- منتجات أوشكت على النفاد -->
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">⚠️ منتجات أوشكت على النفاد</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 200px;">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>اسم المنتج</th>
+                                                <th>الكود</th>
+                                                <th>المتبقي</th>
+                                                <th>الحالة</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lowStockBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- /col-lg-8 -->
+                </div> <!-- /row -->
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- نافذة عائمة للمبيعات -->
+    <div class="floating-panel-backdrop" id="panel-sales">
+        <div class="floating-panel">
+            <div class="floating-panel-header">
+                <span class="floating-panel-title">إدارة المبيعات</span>
+                <button class="floating-panel-close" data-close-panel>&times;</button>
+            </div>
+            <div class="floating-panel-body">
+                <div class="row">
+                    <!-- فورم بيع منتج -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">💰 بيع منتج</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="saleForm">
+                                    <div class="mb-3">
+                                        <label for="saleBarcode" class="form-label">كود المنتج</label>
+                                        <input type="text" class="form-control" id="saleBarcode" placeholder="اكتب الكود يدويًا">
+                                    </div>
 
+                                    <div class="mb-3">
+                                        <label for="saleProductName" class="form-label">اسم المنتج</label>
+                                        <input type="text" class="form-control" id="saleProductName" readonly>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="saleCost" class="form-label">سعر الجملة</label>
+                                            <input type="number" class="form-control" id="saleCost" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="saleAvailableQty" class="form-label">المتوفر</label>
+                                            <input type="number" class="form-control" id="saleAvailableQty" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="salePrice" class="form-label">سعر البيع</label>
+                                            <input type="number" step="0.01" class="form-control" id="salePrice" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="saleQty" class="form-label">الكمية المباعة</label>
+                                            <input type="number" class="form-control" id="saleQty" required value="1">
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success w-100">✅ تسجيل عملية البيع</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- جداول المبيعات -->
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">📆 مبيعات اليوم</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="printSection('todaySalesTable')">🖨 طباعة</button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="exportToExcel('todaySalesTable','مبيعات اليوم')">📄 Excel</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 250px;">
+                                    <table class="table table-sm" id="todaySalesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>الوقت</th>
+                                                <th>المنتج</th>
+                                                <th>الكمية</th>
+                                                <th>سعر البيع</th>
+                                                <th>الربح</th>
+                                                <th>إدارة</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="todaySalesBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">📅 مبيعات الشهر الحالي</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="printSection('monthSalesTable')">🖨 طباعة</button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="exportToExcel('monthSalesTable','مبيعات الشهر')">📄 Excel</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 250px;">
+                                    <table class="table table-sm" id="monthSalesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>التاريخ</th>
+                                                <th>المنتج</th>
+                                                <th>الكمية</th>
+                                                <th>إجمالي السعر</th>
+                                                <th>إجمالي الربح</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="monthSalesBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!-- /col-lg-8 -->
+                </div> <!-- /row -->
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة عائمة لحركات المخزون -->
+    <div class="floating-panel-backdrop" id="panel-moves">
+        <div class="floating-panel">
+            <div class="floating-panel-header">
+                <span class="floating-panel-title">حركات المخزون</span>
+                <button class="floating-panel-close" data-close-panel>&times;</button>
+            </div>
+            <div class="floating-panel-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">➕➖ حركة مخزون</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="stockMoveForm">
+                                    <div class="mb-3">
+                                        <label for="moveBarcode" class="form-label">كود المنتج</label>
+                                        <input type="text" class="form-control" id="moveBarcode" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="moveType" class="form-label">نوع الحركة</label>
+                                        <select id="moveType" class="form-select" required>
+                                            <option value="in">إضافة للرصيد</option>
+                                            <option value="out">خصم من الرصيد</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="moveQty" class="form-label">الكمية</label>
+                                        <input type="number" class="form-control" id="moveQty" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="moveNote" class="form-label">ملاحظة</label>
+                                        <input type="text" class="form-control" id="moveNote" placeholder="سبب الحركة (اختياري)">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">📌 تسجيل الحركة</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">📜 سجل حركات المخزون</h5>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="printSection('stockMovesTable')">🖨 طباعة</button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="exportToExcel('stockMovesTable','حركات المخزون')">📄 Excel</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 300px;">
+                                    <table class="table table-sm" id="stockMovesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>التاريخ</th>
+                                                <th>الكود</th>
+                                                <th>النوع</th>
+                                                <th>الكمية</th>
+                                                <th>ملاحظة</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="stockMovesBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <!-- /row -->
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة عائمة للتقارير -->
+    <div class="floating-panel-backdrop" id="panel-stats">
+        <div class="floating-panel">
+            <div class="floating-panel-header">
+                <span class="floating-panel-title">التقارير والإحصائيات</span>
+                <button class="floating-panel-close" data-close-panel>&times;</button>
+            </div>
+            <div class="floating-panel-body">
+                <!-- هنا يمكن إضافة تقارير إضافية حسب كودك (تصفية بالتاريخ، فترات، إلخ) -->
+                <p>هنا مساحة لإضافة تقارير مخصصة (تصفية حسب التاريخ، نوع العملية، إلخ).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة عائمة للمشتريات (يمكن تفعيلها لاحقًا) -->
+    <div class="floating-panel-backdrop" id="panel-purchase">
+        <div class="floating-panel">
+            <div class="floating-panel-header">
+                <span class="floating-panel-title">المشتريات</span>
+                <button class="floating-panel-close" data-close-panel>&times;</button>
+            </div>
+            <div class="floating-panel-body">
+                <p>يمكنك لاحقًا إضافة فورم المشتريات وجداولها هنا.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- سكربت التشغيل -->
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -559,59 +740,28 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let productsCache = [];
-        let todaySalesCache = {};
-
-        function getTodayKey() {
-            const d = new Date();
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            return `${yyyy}-${mm}-${dd}`;
+        // تحديث التاريخ والوقت في الهيدر
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('currentDateTime').textContent =
+                now.toLocaleString('ar-EG', options);
         }
+        updateDateTime();
+        setInterval(updateDateTime, 60000);
 
-        function getTimeString() {
-            const d = new Date();
-            const hh = String(d.getHours()).padStart(2, '0');
-            const mm = String(d.getMinutes()).padStart(2, '0');
-            const ss = String(d.getSeconds()).padStart(2, '0');
-            return `${hh}:${mm}:${ss}`;
-        }
-
-        // تحديث التاريخ والوقت الحالي في الهيدر
-        function updateCurrentDateTime() {
-            const el = document.getElementById('currentDateTime');
-            if (!el) return;
-            const d = new Date();
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            const hh = String(d.getHours()).padStart(2, '0');
-            const mi = String(d.getMinutes()).padStart(2, '0');
-            const ss = String(d.getSeconds()).padStart(2, '0');
-            el.textContent = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-        }
-
-        updateCurrentDateTime();
-        setInterval(updateCurrentDateTime, 1000);
-
-        function printSection(tableId) {
-            const printContent = document.getElementById(tableId).outerHTML;
-            const originalContent = document.body.innerHTML;
-            document.body.innerHTML = printContent;
-            window.print();
-            document.body.innerHTML = originalContent;
-        }
-
-        function exportToExcel(tableId, fileName) {
-            const table = document.getElementById(tableId);
-            let html = table.outerHTML;
-            let blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-            let link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = fileName + '.xls';
-            link.click();
-        }
+        // مراجع عناصر DOM
+        const productsBody = document.getElementById('productsBody');
+        const lowStockBody = document.getElementById('lowStockBody');
+        const searchNameInput = document.getElementById('searchName');
+        const searchBarcodeInput = document.getElementById('searchBarcode');
 
         const productForm = document.getElementById('productForm');
         const productIdInput = document.getElementById('productId');
@@ -621,10 +771,6 @@
         const productQtyInput = document.getElementById('productQty');
         const productMinStockInput = document.getElementById('productMinStock');
         const btnResetProduct = document.getElementById('btnResetProduct');
-        const searchNameInput = document.getElementById('searchName');
-        const searchBarcodeInput = document.getElementById('searchBarcode');
-        const productsBody = document.getElementById('productsBody');
-        const lowStockBody = document.getElementById('lowStockBody');
 
         const saleForm = document.getElementById('saleForm');
         const saleBarcodeInput = document.getElementById('saleBarcode');
@@ -633,7 +779,6 @@
         const saleAvailableQtyInput = document.getElementById('saleAvailableQty');
         const salePriceInput = document.getElementById('salePrice');
         const saleQtyInput = document.getElementById('saleQty');
-        const salesBody = document.getElementById('salesBody');
 
         const stockMoveForm = document.getElementById('stockMoveForm');
         const moveBarcodeInput = document.getElementById('moveBarcode');
@@ -647,19 +792,25 @@
         const totalProductsLabel = document.getElementById('totalProducts');
         const lowStockCountLabel = document.getElementById('lowStockCount');
 
-        // إحصائيات الشهر
         const monthTotalProfitLabel = document.getElementById('monthTotalProfit');
         const monthTotalQtyLabel = document.getElementById('monthTotalQty');
         const monthDaysCountLabel = document.getElementById('monthDaysCount');
 
+        const todaySalesBody = document.getElementById('todaySalesBody');
+        const monthSalesBody = document.getElementById('monthSalesBody');
+        const btnResetAll = document.getElementById('btnResetAll');
+
+        let productsCache = [];
+
+        // تحميل المنتجات وتحديث الجداول والإحصائيات
         db.ref('products').on('value', snapshot => {
             productsCache = [];
             productsBody.innerHTML = '';
             lowStockBody.innerHTML = '';
-            
+
             let totalProducts = 0;
             let lowStockCount = 0;
-            
+
             if (snapshot.exists()) {
                 const products = snapshot.val();
                 for (const key in products) {
@@ -667,14 +818,14 @@
                     productsCache.push({ id: key, ...p });
                 }
             }
-            
+
             renderProductsTable();
-            
+
             productsCache.forEach(p => {
                 totalProducts++;
                 if (p.qty <= 0 || p.qty <= p.minStock) lowStockCount++;
             });
-            
+
             totalProductsLabel.textContent = totalProducts;
             lowStockCountLabel.textContent = lowStockCount;
         });
@@ -682,19 +833,19 @@
         function renderProductsTable() {
             productsBody.innerHTML = '';
             lowStockBody.innerHTML = '';
-            
+
             const nameFilter = searchNameInput.value.trim().toLowerCase();
             const barcodeFilter = searchBarcodeInput.value.trim().toLowerCase();
-            
+
             let lowStockItems = [];
-            
+
             productsCache.forEach(p => {
                 if (nameFilter && !p.name.toLowerCase().includes(nameFilter)) return;
                 if (barcodeFilter && !p.barcode.toLowerCase().includes(barcodeFilter)) return;
-                
+
                 let statusBadge = '';
                 let rowClass = '';
-                
+
                 if (p.qty <= 0) {
                     statusBadge = '<span class="badge bg-danger">نفد</span>';
                     rowClass = 'out-stock';
@@ -706,7 +857,7 @@
                 } else {
                     statusBadge = '<span class="badge bg-success">جيد</span>';
                 }
-                
+
                 const tr = document.createElement('tr');
                 tr.className = rowClass;
                 tr.innerHTML = `
@@ -723,11 +874,11 @@
                 `;
                 productsBody.appendChild(tr);
             });
-            
+
             lowStockItems.forEach(p => {
                 let statusText = p.qty <= 0 ? 'نفد' : 'قرب النفاد';
                 let statusClass = p.qty <= 0 ? 'danger' : 'warning';
-                
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${p.name}</td>
@@ -742,15 +893,16 @@
         window.editProduct = function(id) {
             const found = productsCache.find(p => p.id === id);
             if (!found) return;
-            
+
             productIdInput.value = id;
             productNameInput.value = found.name;
             productBarcodeInput.value = found.barcode || '';
             productCostInput.value = found.cost;
             productQtyInput.value = found.qty;
             productMinStockInput.value = found.minStock;
-            
-            document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
+
+            // فتح نافذة المخزون إذا كانت مغلقة
+            document.getElementById('panel-stock').style.display = 'flex';
         };
 
         window.deleteProduct = function(id) {
@@ -770,28 +922,28 @@
 
         productForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const id = productIdInput.value.trim();
             const name = productNameInput.value.trim();
             const barcode = productBarcodeInput.value.trim();
             const cost = parseFloat(productCostInput.value) || 0;
             const qty = parseInt(productQtyInput.value) || 0;
             const minStock = parseInt(productMinStockInput.value) || 0;
-            
+
             if (!name) {
                 alert('الرجاء إدخال اسم المنتج');
                 return;
             }
-            
+
             const data = { name, barcode, cost, qty, minStock };
-            
+
             if (id) {
                 db.ref('products/' + id).update(data);
             } else {
                 const newRef = db.ref('products').push();
                 newRef.set(data);
             }
-            
+
             btnResetProduct.click();
             alert('تم حفظ المنتج بنجاح');
         });
@@ -828,271 +980,309 @@
             if (barcode) loadProductByBarcode(barcode);
         });
 
+        // تسجيل عملية البيع
         saleForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const barcode = saleBarcodeInput.value.trim();
-            const name = saleProductNameInput.value.trim();
-            const cost = parseFloat(saleCostInput.value) || 0;
-            const availableQty = parseInt(saleAvailableQtyInput.value) || 0;
             const price = parseFloat(salePriceInput.value) || 0;
             const qty = parseInt(saleQtyInput.value) || 0;
-            
-            if (!barcode || !name) {
-                alert('اختر منتجًا صحيحًا قبل البيع');
+
+            if (!barcode || qty <= 0 || price <= 0) {
+                alert('الرجاء إدخال بيانات صحيحة للبيع');
                 return;
             }
-            
-            if (qty <= 0) {
-                alert('كمية غير صحيحة');
-                return;
-            }
-            
-            if (qty > availableQty) {
-                alert('الكمية المطلوبة أكبر من المتوفر');
-                return;
-            }
-            
-            const profitPerUnit = price - cost;
-            const totalProfit = profitPerUnit * qty;
-            
-            const today = getTodayKey();
-            const nowTime = getTimeString();
-            
+
             const product = productsCache.find(p => p.barcode === barcode);
             if (!product) {
-                alert('المنتج غير موجود');
+                alert('لم يتم العثور على المنتج في المخزون');
                 return;
             }
-            
-            const newQty = (product.qty || 0) - qty;
-            db.ref('products/' + product.id).update({ qty: newQty });
-            
-            const saleData = {
-                date: today,
-                time: nowTime,
-                dateTime: `${today} ${nowTime}`,
-                productName: name,
-                barcode,
-                qty,
-                cost,
-                price,
-                profit: totalProfit
-            };
-            
-            const newSaleRef = db.ref('sales/' + today).push();
-            newSaleRef.set(saleData);
-            
-            const statsRef = db.ref('dailyStats/' + today);
-            statsRef.once('value').then(statSnap => {
-                let stats = { totalProfit: 0, totalQty: 0, totalSalesCount: 0 };
-                if (statSnap.exists()) stats = statSnap.val();
-                
-                stats.totalProfit = (stats.totalProfit || 0) + totalProfit;
-                stats.totalQty = (stats.totalQty || 0) + qty;
-                stats.totalSalesCount = (stats.totalSalesCount || 0) + 1;
-                statsRef.set(stats);
+
+            if (qty > product.qty) {
+                alert('الكمية المطلوبة أكبر من المتوفر في المخزون');
+                return;
+            }
+
+            const totalSale = price * qty;
+            const totalCost = product.cost * qty;
+            const profit = totalSale - totalCost;
+
+            const now = new Date();
+            const dateKey = now.toISOString().split('T')[0];
+            const timeText = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+
+            const saleRef = db.ref('sales/' + dateKey).push();
+            saleRef.set({
+                barcode: barcode,
+                name: product.name,
+                qty: qty,
+                price: price,
+                totalSale: totalSale,
+                totalCost: totalCost,
+                profit: profit,
+                time: timeText
             });
-            
-            salePriceInput.value = '';
-            saleQtyInput.value = '1';
-            
+
+            db.ref('products/' + product.id).update({
+                qty: product.qty - qty
+            });
+
+            saleForm.reset();
+            saleQtyInput.value = 1;
             alert('تم تسجيل عملية البيع بنجاح');
         });
 
+        // تحميل مبيعات اليوم
         function loadTodaySales() {
-            const today = getTodayKey();
-            
-            db.ref('sales/' + today).on('value', snapshot => {
-                salesBody.innerHTML = '';
-                todaySalesCache = {};
-                
-                let totalProfit = 0;
-                let totalQty = 0;
-                
+            const now = new Date();
+            const dateKey = now.toISOString().split('T')[0];
+            db.ref('sales/' + dateKey).on('value', snapshot => {
+                todaySalesBody.innerHTML = '';
+                let todayProfit = 0;
+                let todayQty = 0;
+
                 if (snapshot.exists()) {
                     const sales = snapshot.val();
-                    
                     for (const key in sales) {
                         const s = sales[key];
-                        todaySalesCache[key] = s;
-                        
+                            todayProfit += s.profit || 0;
+                            todayQty += s.qty || 0;
+
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${s.dateTime || (s.date + ' ' + s.time)}</td>
-                            <td>${s.productName}</td>
-                            <td>${s.qty}</td>
-                            <td>${parseFloat(s.price).toFixed(2)}</td>
-                            <td class="text-success fw-bold">${parseFloat(s.profit).toFixed(2)}</td>
+                            <td>${s.time || ''}</td>
+                            <td>${s.name || ''}</td>
+                            <td>${s.qty || 0}</td>
+                            <td>${s.price || 0}</td>
+                            <td>${s.profit || 0}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteSale('${dateKey}','${key}',${s.qty},'${s.barcode}')">حذف</button>
+                            </td>
                         `;
-                        salesBody.appendChild(tr);
-                        
-                        totalProfit += s.profit || 0;
-                        totalQty += s.qty || 0;
+                        todaySalesBody.appendChild(tr);
                     }
                 }
-                
-                todayProfitLabel.textContent = parseFloat(totalProfit).toFixed(2);
-                todaySoldQtyLabel.textContent = totalQty;
+
+                todayProfitLabel.textContent = todayProfit.toFixed(2);
+                todaySoldQtyLabel.textContent = todayQty;
             });
         }
         loadTodaySales();
 
-        // تحميل إحصائيات الشهر
-        function loadMonthlyStats() {
-            const d = new Date();
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const monthPrefix = `${yyyy}-${mm}-`;
-
-            db.ref('dailyStats').on('value', snapshot => {
-                let monthProfit = 0;
-                let monthQty = 0;
-                let daysCount = 0;
-
-                if (snapshot.exists()) {
-                    const allDays = snapshot.val();
-                    for (const dayKey in allDays) {
-                        if (dayKey.startsWith(monthPrefix)) {
-                            const st = allDays[dayKey];
-                            const tp = st.totalProfit || 0;
-                            const tq = st.totalQty || 0;
-                            monthProfit += tp;
-                            monthQty += tq;
-                            daysCount++;
-                        }
-                    }
-                }
-
-                if (monthTotalProfitLabel) {
-                    monthTotalProfitLabel.textContent = monthProfit.toFixed(2);
-                }
-                if (monthTotalQtyLabel) {
-                    monthTotalQtyLabel.textContent = monthQty;
-                }
-                if (monthDaysCountLabel) {
-                    monthDaysCountLabel.textContent = daysCount;
-                }
-            });
-        }
-
-        loadMonthlyStats();
-
-        stockMoveForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const barcode = moveBarcodeInput.value.trim();
-            const type = moveTypeSelect.value;
-            const qty = parseInt(moveQtyInput.value) || 0;
-            const note = moveNoteInput.value.trim();
-            
-            if (!barcode) {
-                alert('أدخل كود المنتج');
-                return;
-            }
-            
-            if (qty <= 0) {
-                alert('كمية غير صحيحة');
-                return;
-            }
-            
-            const product = productsCache.find(p => p.barcode === barcode);
-            if (!product) {
-                alert('لم يتم العثور على المنتج');
-                return;
-            }
-            
-            const pass = prompt('أدخل الرقم السري لتسجيل حركة المخزون:');
+        window.deleteSale = function(dateKey, saleId, qty, barcode) {
+            const pass = prompt('أدخل الرقم السري لحذف عملية البيع:');
             if (pass === null) return;
             if (pass !== '521988') {
                 alert('رقم سرّي غير صحيح');
                 return;
             }
-            
-            let newQty = product.qty || 0;
-            if (type === 'in') {
-                newQty += qty;
-            } else {
-                newQty -= qty;
-                if (newQty < 0) newQty = 0;
+            if (!confirm('سيتم حذف عملية البيع واسترجاع الكمية للمخزون، هل أنت متأكد؟')) return;
+
+            const product = productsCache.find(p => p.barcode === barcode);
+            db.ref('sales/' + dateKey + '/' + saleId).remove().then(() => {
+                if (product) {
+                    db.ref('products/' + product.id).update({
+                        qty: product.qty + qty
+                    });
+                }
+                alert('تم حذف عملية البيع واسترجاع الكمية.');
+            }).catch(err => {
+                alert('حدث خطأ أثناء الحذف: ' + err.message);
+            });
+        };
+
+        // مبيعات الشهر (تجميع)
+        function loadMonthSales() {
+            const now = new Date();
+            const currentMonth = now.toISOString().slice(0, 7); // yyyy-mm
+            db.ref('sales').on('value', snapshot => {
+                monthSalesBody.innerHTML = '';
+                let monthProfit = 0;
+                let monthQty = 0;
+                let daysSet = new Set();
+
+                if (snapshot.exists()) {
+                    const allDays = snapshot.val();
+                    for (const dayKey in allDays) {
+                        if (!dayKey.startsWith(currentMonth)) continue;
+                        const daySales = allDays[dayKey];
+                        for (const saleId in daySales) {
+                            const s = daySales[saleId];
+                            monthProfit += s.profit || 0;
+                            monthQty += s.qty || 0;
+                            daysSet.add(dayKey);
+
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${dayKey}</td>
+                                <td>${s.name || ''}</td>
+                                <td>${s.qty || 0}</td>
+                                <td>${s.totalSale || 0}</td>
+                                <td>${s.profit || 0}</td>
+                            `;
+                            monthSalesBody.appendChild(tr);
+                        }
+                    }
+                }
+
+                monthTotalProfitLabel.textContent = monthProfit.toFixed(2);
+                monthTotalQtyLabel.textContent = monthQty;
+                monthDaysCountLabel.textContent = daysSet.size;
+            });
+        }
+        loadMonthSales();
+
+        // حركات المخزون
+        stockMoveForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const barcode = moveBarcodeInput.value.trim();
+            const type = moveTypeSelect.value;
+            const qty = parseInt(moveQtyInput.value) || 0;
+            const note = moveNoteInput.value.trim();
+
+            if (!barcode || qty <= 0) {
+                alert('الرجاء إدخال كود المنتج وكمية صحيحة');
+                return;
             }
-            
+
+            const product = productsCache.find(p => p.barcode === barcode);
+            if (!product) {
+                alert('لم يتم العثور على المنتج في المخزون');
+                return;
+            }
+
+            let newQty = product.qty;
+            if (type === 'in') newQty += qty;
+            if (type === 'out') {
+                if (qty > product.qty) {
+                    alert('لا يمكن خصم كمية أكبر من المتوفر');
+                    return;
+                }
+                newQty -= qty;
+            }
+
             db.ref('products/' + product.id).update({ qty: newQty });
-            
-            const today = getTodayKey();
-            const nowTime = getTimeString();
-            const timestamp = Date.now();
-            
-            const moveData = {
-                barcode,
-                type,
-                qty,
-                note,
-                date: today,
-                time: nowTime,
-                timestamp
-            };
-            
-            const newMoveRef = db.ref('stockMoves').push();
-            newMoveRef.set(moveData);
-            
-            moveBarcodeInput.value = '';
-            moveQtyInput.value = '';
-            moveNoteInput.value = '';
-            
+
+            const now = new Date();
+            const dateText = now.toISOString().slice(0, 10);
+            const timeText = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+
+            const moveRef = db.ref('stockMoves').push();
+            moveRef.set({
+                barcode: barcode,
+                type: type,
+                qty: qty,
+                note: note,
+                date: dateText,
+                time: timeText
+            });
+
+            stockMoveForm.reset();
             alert('تم تسجيل حركة المخزون بنجاح');
         });
 
         db.ref('stockMoves').on('value', snapshot => {
             stockMovesBody.innerHTML = '';
-            
             if (snapshot.exists()) {
                 const moves = snapshot.val();
-                const rows = [];
-                
                 for (const key in moves) {
-                    rows.push({ id: key, ...moves[key] });
-                }
-                
-                rows.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                
-                rows.slice(0, 50).forEach(m => {
+                    const m = moves[key];
+                    const typeText = m.type === 'in' ? 'إضافة' : 'خصم';
+                    const typeClass = m.type === 'in' ? 'success' : 'danger';
+
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${m.date || ''}</td>
-                        <td>${m.time || ''}</td>
-                        <td><code>${m.barcode || ''}</code></td>
-                        <td><span class="badge ${m.type === 'in' ? 'bg-success' : 'bg-danger'}">${m.type === 'in' ? 'دخول' : 'خروج'}</span></td>
+                        <td>${m.date || ''} ${m.time || ''}</td>
+                        <td>${m.barcode || ''}</td>
+                        <td><span class="badge bg-${typeClass}">${typeText}</span></td>
                         <td>${m.qty || 0}</td>
                         <td>${m.note || ''}</td>
                     `;
                     stockMovesBody.appendChild(tr);
-                });
+                }
             }
         });
 
-        document.getElementById('btnResetAll').addEventListener('click', function() {
-            const pass = prompt('أدخل الرقم السري لتصفير بيانات المبيعات والأرباح:');
+        // تصفير بيانات المبيعات فقط
+        btnResetAll.addEventListener('click', function() {
+            const pass = prompt('أدخل الرقم السري لتصفير بيانات المبيعات:');
             if (pass === null) return;
-            
             if (pass !== '521988') {
                 alert('رقم سرّي غير صحيح');
                 return;
             }
-            
-            if (!confirm('⚠️ سيتم حذف كل المبيعات والإحصائيات اليومية وحركات المخزون فقط. هل أنت متأكد؟')) {
-                return;
-            }
-            
-            Promise.all([
-                db.ref('sales').remove(),
-                db.ref('dailyStats').remove(),
-                db.ref('stockMoves').remove()
-            ]).then(() => {
-                alert('✅ تم تصفير بيانات المبيعات والأرباح وحركات المخزون بنجاح');
-                location.reload();
+            if (!confirm('سيتم حذف جميع سجلات المبيعات (لن يتم حذف المنتجات)، هل أنت متأكد؟')) return;
+
+            db.ref('sales').remove().then(() => {
+                alert('تم تصفير بيانات المبيعات بنجاح');
             }).catch(err => {
-                alert('خطأ: ' + err.message);
+                alert('حدث خطأ أثناء التصفير: ' + err.message);
+            });
+        });
+
+        // دوال الطباعة والتصدير
+        function printSection(tableId) {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            const w = window.open('', '_blank');
+            w.document.write('<html><head><title>طباعة</title>');
+            w.document.write('<style>table{width:100%;border-collapse:collapse}th,td{border:1px solid #000;padding:5px;text-align:center}</style>');
+            w.document.write('</head><body>');
+            w.document.write(table.outerHTML);
+            w.document.write('</body></html>');
+            w.document.close();
+            w.print();
+        }
+
+        function exportToExcel(tableId, sheetName) {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            let csv = '';
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('th,td');
+                let rowData = [];
+                cols.forEach(col => {
+                    let text = col.innerText.replace(/"/g, '""');
+                    rowData.push('"' + text + '"');
+                });
+                csv += rowData.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = sheetName + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // التحكم في النوافذ العائمة
+        document.querySelectorAll('.menu-tile').forEach(tile => {
+            tile.addEventListener('click', () => {
+                const panelId = tile.getAttribute('data-panel');
+                const panel = document.getElementById(panelId);
+                if (panel) {
+                    panel.style.display = 'flex';
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-close-panel]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const backdrop = btn.closest('.floating-panel-backdrop');
+                if (backdrop) backdrop.style.display = 'none';
+            });
+        });
+
+        document.querySelectorAll('.floating-panel-backdrop').forEach(backdrop => {
+            backdrop.addEventListener('click', (e) => {
+                if (e.target === backdrop) {
+                    backdrop.style.display = 'none';
+                }
             });
         });
     </script>
