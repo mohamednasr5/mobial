@@ -121,38 +121,6 @@
             font-weight: 600;
         }
         
-        .scanner-container {
-            border: 2px dashed var(--secondary-color);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            background-color: #f8f9fa;
-            margin-top: 15px;
-        }
-        
-        #videoElement {
-            width: 100%;
-            max-height: 300px;
-            border-radius: 8px;
-            background-color: #000;
-        }
-        
-        .scan-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: 2px;
-            background: #2ecc71;
-            animation: scan 2s infinite linear;
-        }
-        
-        @keyframes scan {
-            0% { top: 10%; }
-            100% { top: 90%; }
-        }
-        
         .low-stock { background-color: #fff3cd !important; }
         .out-stock { background-color: #f8d7da !important; }
         
@@ -173,7 +141,7 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="mb-2">برنامج الحسن للهواتف المحمولة</h1>
-                    <p class="mb-0">مبيعات - مخزون - صيانة - إحصائيات - باركود</p>
+                    <p class="mb-0">مبيعات - مخزون - صيانة - إحصائيات</p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <button id="btnResetAll" class="btn btn-danger">
@@ -232,11 +200,8 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label for="productBarcode" class="form-label">باركود المنتج</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="productBarcode" placeholder="اكتب الباركود">
-                                    <button type="button" class="btn btn-primary" id="btnOpenScanner">📷 مسح</button>
-                                </div>
+                                <label for="productBarcode" class="form-label">باركود / كود المنتج</label>
+                                <input type="text" class="form-control" id="productBarcode" placeholder="اكتب الكود يدويًا (اختياري)">
                             </div>
                             
                             <div class="row">
@@ -262,38 +227,10 @@
                         </form>
                     </div>
                 </div>
-
-                <!-- Barcode Scanner -->
-                <div class="card" id="scannerCard">
-                    <div class="card-header">
-                        <h5 class="mb-0">🔍 مسح باركود</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="scannerWrapper" class="d-none">
-                            <div class="position-relative">
-                                <video id="videoElement" autoplay playsinline></video>
-                                <div class="scan-overlay"></div>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-danger w-100" id="btnCloseScanner">إيقاف المسح</button>
-                            </div>
-                            <div class="mt-3 alert alert-info">
-                                <small>💡 وجه الكاميرا نحو الباركود ليتم مسحه تلقائياً</small>
-                            </div>
-                        </div>
-                        <div id="scannerPlaceholder" class="text-center">
-                            <p class="text-muted">اضغط على زر "مسح" لفتح الماسح الضوئي</p>
-                            <div class="alert alert-warning">
-                                <small>⚠️ يجب منح الإذن لاستخدام الكاميرا</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Middle Column - Products Table -->
             <div class="col-lg-8">
-                <!-- Products Table -->
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">📋 قائمة المنتجات والمخزون</h5>
@@ -308,7 +245,7 @@
                                 <input type="text" class="form-control" id="searchName" placeholder="🔍 بحث بالاسم">
                             </div>
                             <div class="col-md-6 mt-2 mt-md-0">
-                                <input type="text" class="form-control" id="searchBarcode" placeholder="🔍 بحث بالباركود">
+                                <input type="text" class="form-control" id="searchBarcode" placeholder="🔍 بحث بالكود">
                             </div>
                         </div>
                         
@@ -317,7 +254,7 @@
                                 <thead>
                                     <tr>
                                         <th>الاسم</th>
-                                        <th>باركود</th>
+                                        <th>الكود</th>
                                         <th>سعر الجملة</th>
                                         <th>المتوفر</th>
                                         <th>حد التنبيه</th>
@@ -344,7 +281,7 @@
                                 <thead>
                                     <tr>
                                         <th>اسم المنتج</th>
-                                        <th>الباركود</th>
+                                        <th>الكود</th>
                                         <th>المتبقي</th>
                                         <th>الحالة</th>
                                     </tr>
@@ -370,11 +307,8 @@
                     <div class="card-body">
                         <form id="saleForm">
                             <div class="mb-3">
-                                <label for="saleBarcode" class="form-label">باركود المنتج</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="saleBarcode" placeholder="اكتب أو امسح الباركود">
-                                    <button type="button" class="btn btn-primary" id="btnSaleScanner">📷 مسح</button>
-                                </div>
+                                <label for="saleBarcode" class="form-label">كود المنتج</label>
+                                <input type="text" class="form-control" id="saleBarcode" placeholder="اكتب الكود يدويًا">
                             </div>
                             
                             <div class="mb-3">
@@ -419,8 +353,8 @@
                     <div class="card-body">
                         <form id="stockMoveForm">
                             <div class="mb-3">
-                                <label for="moveBarcode" class="form-label">باركود المنتج</label>
-                                <input type="text" class="form-control" id="moveBarcode" placeholder="باركود المنتج">
+                                <label for="moveBarcode" class="form-label">كود المنتج</label>
+                                <input type="text" class="form-control" id="moveBarcode" placeholder="كود المنتج">
                             </div>
                             
                             <div class="mb-3">
@@ -483,7 +417,7 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-header d-flex justify-content بين align-items-center">
                         <h5 class="mb-0">🔄 آخر حركات المخزون</h5>
                         <button class="btn btn-sm btn-outline-secondary" onclick="printSection('stockMovesTable')">🖨 طباعة</button>
                     </div>
@@ -494,7 +428,7 @@
                                     <tr>
                                         <th>التاريخ</th>
                                         <th>الوقت</th>
-                                        <th>باركود</th>
+                                        <th>الكود</th>
                                         <th>نوع الحركة</th>
                                         <th>الكمية</th>
                                         <th>ملاحظات</th>
@@ -522,7 +456,6 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/@zxing/library@0.18.6/umd/index.min.js"></script>
 
     <script>
         // Firebase Configuration
@@ -537,18 +470,12 @@
             measurementId: "G-PP1BG203MT"
         };
 
-        // Initialize Firebase (v8)
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Global Variables
         let productsCache = [];
         let todaySalesCache = {};
-        let scannerStream = null;
-        let scannerActive = false;
-        let currentScannerMode = 'product'; // 'product' or 'sale'
 
-        // Utility Functions
         function getTodayKey() {
             const d = new Date();
             const yyyy = d.getFullYear();
@@ -583,7 +510,6 @@
             link.click();
         }
 
-        // DOM Elements
         const productForm = document.getElementById('productForm');
         const productIdInput = document.getElementById('productId');
         const productNameInput = document.getElementById('productName');
@@ -613,19 +539,11 @@
         const moveNoteInput = document.getElementById('moveNote');
         const stockMovesBody = document.getElementById('stockMovesBody');
 
-        const scannerWrapper = document.getElementById('scannerWrapper');
-        const scannerPlaceholder = document.getElementById('scannerPlaceholder');
-        const videoElement = document.getElementById('videoElement');
-        const btnOpenScanner = document.getElementById('btnOpenScanner');
-        const btnSaleScanner = document.getElementById('btnSaleScanner');
-        const btnCloseScanner = document.getElementById('btnCloseScanner');
-
         const todayProfitLabel = document.getElementById('todayProfit');
         const todaySoldQtyLabel = document.getElementById('todaySoldQty');
         const totalProductsLabel = document.getElementById('totalProducts');
         const lowStockCountLabel = document.getElementById('lowStockCount');
 
-        // Load Products
         db.ref('products').on('value', snapshot => {
             productsCache = [];
             productsBody.innerHTML = '';
@@ -685,13 +603,14 @@
                 tr.className = rowClass;
                 tr.innerHTML = `
                     <td>${p.name}</td>
-                    <td><code>${p.barcode}</code></td>
+                    <td><code>${p.barcode || ''}</code></td>
                     <td>${parseFloat(p.cost).toFixed(2)}</td>
                     <td>${p.qty}</td>
                     <td>${p.minStock}</td>
                     <td>${statusBadge}</td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="editProduct('${p.id}')">تعديل</button>
+                        <button class="btn btn-sm btn-primary me-1" onclick="editProduct('${p.id}')">تعديل</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.id}')">حذف</button>
                     </td>
                 `;
                 productsBody.appendChild(tr);
@@ -704,7 +623,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${p.name}</td>
-                    <td>${p.barcode}</td>
+                    <td>${p.barcode || ''}</td>
                     <td>${p.qty}</td>
                     <td><span class="badge bg-${statusClass}">${statusText}</span></td>
                 `;
@@ -712,14 +631,13 @@
             });
         }
 
-        // Edit Product
         window.editProduct = function(id) {
             const found = productsCache.find(p => p.id === id);
             if (!found) return;
             
             productIdInput.value = id;
             productNameInput.value = found.name;
-            productBarcodeInput.value = found.barcode;
+            productBarcodeInput.value = found.barcode || '';
             productCostInput.value = found.cost;
             productQtyInput.value = found.qty;
             productMinStockInput.value = found.minStock;
@@ -727,26 +645,33 @@
             document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
         };
 
-        // Save Product
+        window.deleteProduct = function(id) {
+            const pass = prompt('أدخل الرقم السري لحذف المنتج:');
+            if (pass === null) return;
+            if (pass !== '521988') {
+                alert('رقم سرّي غير صحيح');
+                return;
+            }
+            if (!confirm('سيتم حذف هذا المنتج نهائياً من المخزون، هل أنت متأكد؟')) return;
+            db.ref('products/' + id).remove().then(() => {
+                alert('تم حذف المنتج بنجاح');
+            }).catch(err => {
+                alert('حدث خطأ أثناء الحذف: ' + err.message);
+            });
+        };
+
         productForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const id = productIdInput.value.trim();
             const name = productNameInput.value.trim();
-            const barcode = productBarcodeInput.value.trim() || ('MANUAL-' + Date.now());
+            const barcode = productBarcodeInput.value.trim();
             const cost = parseFloat(productCostInput.value) || 0;
             const qty = parseInt(productQtyInput.value) || 0;
             const minStock = parseInt(productMinStockInput.value) || 0;
             
             if (!name) {
                 alert('الرجاء إدخال اسم المنتج');
-                return;
-            }
-            
-            const pass = prompt('أدخل الرقم السري للسماح بإضافة/تعديل المنتج:');
-            if (pass === null) return;
-            if (pass !== '521988') {
-                alert('رقم سرّي غير صحيح');
                 return;
             }
             
@@ -763,7 +688,6 @@
             alert('تم حفظ المنتج بنجاح');
         });
 
-        // Reset Product Form
         btnResetProduct.addEventListener('click', function() {
             productIdInput.value = '';
             productNameInput.value = '';
@@ -773,18 +697,16 @@
             productMinStockInput.value = '1';
         });
 
-        // Search Products
         searchNameInput.addEventListener('input', renderProductsTable);
         searchBarcodeInput.addEventListener('input', renderProductsTable);
 
-        // Load Product for Sale
         function loadProductByBarcode(barcode) {
             const p = productsCache.find(pr => pr.barcode === barcode);
             if (!p) {
                 saleProductNameInput.value = '';
                 saleCostInput.value = '';
                 saleAvailableQtyInput.value = '';
-                alert('لم يتم العثور على منتج بهذا الباركود');
+                alert('لم يتم العثور على منتج بهذا الكود');
                 return false;
             }
             saleProductNameInput.value = p.name;
@@ -798,7 +720,6 @@
             if (barcode) loadProductByBarcode(barcode);
         });
 
-        // Process Sale
         saleForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -869,7 +790,6 @@
             alert('تم تسجيل عملية البيع بنجاح');
         });
 
-        // Load Today's Sales
         function loadTodaySales() {
             const today = getTodayKey();
             
@@ -908,7 +828,6 @@
         }
         loadTodaySales();
 
-        // Stock Movement
         stockMoveForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -918,7 +837,7 @@
             const note = moveNoteInput.value.trim();
             
             if (!barcode) {
-                alert('أدخل باركود المنتج');
+                alert('أدخل كود المنتج');
                 return;
             }
             
@@ -974,7 +893,6 @@
             alert('تم تسجيل حركة المخزون بنجاح');
         });
 
-        // Load Stock Moves
         db.ref('stockMoves').on('value', snapshot => {
             stockMovesBody.innerHTML = '';
             
@@ -1003,66 +921,6 @@
             }
         });
 
-        // Handle barcode once detected
-        function handleBarcodeDetected(code) {
-            if (currentScannerMode === 'product') {
-                productBarcodeInput.value = code;
-            } else if (currentScannerMode === 'sale') {
-                saleBarcodeInput.value = code;
-                loadProductByBarcode(code);
-            }
-            closeScanner();
-        }
-
-        // Open scanner with EAN hints
-        async function openScanner(mode) {
-            currentScannerMode = mode;
-
-            scannerPlaceholder.classList.add('d-none');
-            scannerWrapper.classList.remove('d-none');
-
-            const codeReader = new ZXing.BrowserMultiFormatReader();
-
-            const hints = new Map();
-            hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
-                ZXing.BarcodeFormat.EAN_13,
-                ZXing.BarcodeFormat.EAN_8,
-                ZXing.BarcodeFormat.UPC_A
-            ]);
-            codeReader.defaultOptions = { hints };
-
-            try {
-                const videoInputDevices = await codeReader.listVideoInputDevices();
-                if (!videoInputDevices.length) {
-                    alert("لا توجد كاميرا متاحة");
-                    return;
-                }
-
-                const selectedDeviceId = videoInputDevices[videoInputDevices.length - 1].deviceId;
-
-                codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, err) => {
-                    if (result) {
-                        handleBarcodeDetected(result.text);
-                        codeReader.reset();
-                    }
-                });
-            } catch (error) {
-                alert("حدث خطأ في تشغيل الماسح: " + error);
-            }
-        }
-
-        function closeScanner() {
-            scannerWrapper.classList.add('d-none');
-            scannerPlaceholder.classList.remove('d-none');
-            videoElement.srcObject = null;
-        }
-
-        // Scanner Event Listeners
-        btnOpenScanner.addEventListener('click', () => openScanner('product'));
-        btnSaleScanner.addEventListener('click', () => openScanner('sale'));
-        btnCloseScanner.addEventListener('click', closeScanner);
-
-        // Reset All Data (sales, stats, stockMoves only)
         document.getElementById('btnResetAll').addEventListener('click', function() {
             const pass = prompt('أدخل الرقم السري لتصفير بيانات المبيعات والأرباح:');
             if (pass === null) return;
@@ -1072,7 +930,7 @@
                 return;
             }
             
-            if (!confirm('⚠️ تحذير: سيتم حذف كل المبيعات والإحصائيات اليومية وحركات المخزون. المنتجات لن تُحذف. هل أنت متأكد؟')) {
+            if (!confirm('⚠️ سيتم حذف كل المبيعات والإحصائيات اليومية وحركات المخزون فقط. هل أنت متأكد؟')) {
                 return;
             }
             
@@ -1086,20 +944,6 @@
             }).catch(err => {
                 alert('❌ حدث خطأ أثناء التصفير: ' + err.message);
             });
-        });
-
-        // Initialize
-        window.addEventListener('load', function() {
-            scannerPlaceholder.classList.remove('d-none');
-            scannerWrapper.classList.add('d-none');
-            console.log('برنامج الحسن للهواتف المحمولة جاهز للاستخدام');
-        });
-
-        // Handle page unload
-        window.addEventListener('beforeunload', function() {
-            if (scannerStream) {
-                scannerStream.getTracks().forEach(track => track.stop());
-            }
         });
     </script>
 </body>
