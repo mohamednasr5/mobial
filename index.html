@@ -9,10 +9,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
 
   <!-- html5-qrcode (سكان باركود) -->
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script> <!-- [web:72] -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <!-- SheetJS لتصدير Excel -->
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script> <!-- [web:52] -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
   <!-- Firebase SDK v9+ -->
   <script type="module">
@@ -34,7 +34,7 @@
       signInWithEmailAndPassword,
       signOut,
       createUserWithEmailAndPassword
-    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"; <!-- [web:52][web:56][web:59] -->
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"; /* [web:52][web:56][web:59] */
 
     const firebaseConfig = {
       apiKey: "AIzaSyAoZE2KL3APojd929VEbhSv914jzDv90wA",
@@ -124,20 +124,20 @@
           <hr>
           <form id="registerForm" class="row g-2">
             <div class="col-12">
-              <label class="form-label">إنشاء مستخدم جديد (مدير)</label>
+              <label class="form-label">إنشاء مستخدم أدمن (مرة واحدة فقط)</label>
             </div>
             <div class="col-12">
-              <input type="email" id="registerEmail" class="form-control" placeholder="بريد المدير">
+              <input type="email" id="registerEmail" class="form-control" placeholder="بريد الأدمن">
             </div>
             <div class="col-12">
               <input type="password" id="registerPassword" class="form-control" placeholder="كلمة المرور">
             </div>
             <div class="col-12">
-              <button type="submit" class="btn btn-outline-success w-100">إنشاء مستخدم مدير</button>
+              <button type="submit" class="btn btn-outline-success w-100">إنشاء مستخدم أدمن</button>
             </div>
           </form>
           <div class="mt-2">
-            <small class="text-muted">قم بإنشاء حساب مدير مرة واحدة فقط، ثم استخدم تسجيل الدخول العادي بعد ذلك.</small>
+            <small class="text-muted">يمكن إنشاء أدمن واحد فقط، بعد ذلك استخدم شاشة تسجيل الدخول العادية.</small>
           </div>
         </div>
       </div>
@@ -157,10 +157,10 @@
     </div>
   </div>
 
-  <!-- بقية التطبيق داخل appSection -->
+  <!-- التطبيق -->
   <div id="appSection" class="d-none">
 
-    <!-- لوحة إحصائيات سريعة -->
+    <!-- إحصائيات سريعة -->
     <div class="row g-3 mb-3">
       <div class="col-6 col-md-3">
         <div class="card text-center">
@@ -196,7 +196,7 @@
       </div>
     </div>
 
-    <!-- إدارة المنتجات + بحث + سكان -->
+    <!-- منتجات + بحث + سكان -->
     <div class="row g-3">
       <div class="col-12 col-lg-4">
         <div class="card">
@@ -245,7 +245,7 @@
               <div id="reader" style="width:100%;"></div>
               <button class="btn btn-danger w-100 mt-2" id="btnCloseScanner">إيقاف السكان</button>
             </div>
-            <small class="text-muted">يمكنك فتح الكاميرا لقراءة باركود المنتج مباشرة من الهاتف أو إدخاله يدويًا.</small>
+            <small class="text-muted">يعمل سكان الكاميرا فقط على https أو localhost مع إعطاء صلاحية الكاميرا للمتصفح.</small>
           </div>
         </div>
       </div>
@@ -298,7 +298,7 @@
       </div>
     </div>
 
-    <!-- قسم البيع + المخزون + مبيعات اليوم -->
+    <!-- قسم البيع + حركات المخزون + مبيعات اليوم -->
     <div class="row g-3 mt-3">
       <!-- البيع -->
       <div class="col-12 col-lg-4">
@@ -374,7 +374,7 @@
         </div>
       </div>
 
-      <!-- مبيعات اليوم + حركة المخزون -->
+      <!-- مبيعات اليوم + آخر حركات -->
       <div class="col-12 col-lg-4">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
@@ -431,7 +431,7 @@
       </div>
     </div>
 
-    <!-- إحصائيات أيام سابقة + تقرير فترة زمنية -->
+    <!-- إحصائيات الأيام السابقة + تقرير فترة -->
     <div class="row g-3 mt-3">
       <div class="col-12 col-lg-6">
         <div class="card">
@@ -528,7 +528,6 @@
   const signOut = window._signOut;
   const createUserWithEmailAndPassword = window._createUserWithEmailAndPassword;
 
-  // تواريخ
   function getTodayKey() {
     const d = new Date();
     const yyyy = d.getFullYear();
@@ -544,7 +543,6 @@
     return `${hh}:${mm}:${ss}`;
   }
 
-  // طباعة قسم
   function printSection(sectionId) {
     const printContent = document.getElementById(sectionId).innerHTML;
     const originalContent = document.body.innerHTML;
@@ -555,7 +553,6 @@
   }
   window.printSection = printSection;
 
-  // تصدير Excel
   function exportTableToExcel(tableId, fileName) {
     const table = document.getElementById(tableId);
     if (!table) return;
@@ -593,6 +590,7 @@
     }
   });
 
+  // تسجيل الدخول
   loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
     signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value)
@@ -602,21 +600,45 @@
       .catch(err => alert('فشل تسجيل الدخول: ' + err.message));
   });
 
+  // إنشاء أدمن واحد فقط
   registerForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const email = registerEmail.value.trim();
     const pass = registerPassword.value;
+
     if (!email || !pass) {
-      alert('أدخل بريد وكلمة مرور لإنشاء المدير');
+      alert('أدخل بريد وكلمة مرور لإنشاء الأدمن');
       return;
     }
-    createUserWithEmailAndPassword(auth, email, pass)
-      .then(() => {
-        alert('تم إنشاء مستخدم مدير، يمكنك الآن استخدامه لتسجيل الدخول.');
+
+    const adminRef = ref(db, 'settings/admin');
+    getDB(adminRef).then(adminSnap => {
+      if (adminSnap.exists()) {
+        alert('تم إنشاء أدمن من قبل ولا يمكن إنشاء أدمن آخر.');
         registerEmail.value = '';
         registerPassword.value = '';
-      })
-      .catch(err => alert('خطأ في إنشاء المستخدم: ' + err.message));
+        return;
+      }
+
+      createUserWithEmailAndPassword(auth, email, pass)
+        .then((cred) => {
+          const uid = cred.user.uid;
+          const adminData = {
+            uid: uid,
+            email: email,
+            createdAt: Date.now()
+          };
+          setDB(adminRef, adminData);
+          alert('تم إنشاء مستخدم أدمن واحد فقط بنجاح، لا يمكن إنشاء أدمن آخر.');
+          registerEmail.value = '';
+          registerPassword.value = '';
+        })
+        .catch(err => {
+          alert('خطأ في إنشاء الأدمن: ' + err.message);
+        });
+    }).catch(err => {
+      alert('تعذر التحقق من حالة الأدمن: ' + err.message);
+    });
   });
 
   btnLogout.addEventListener('click', function() {
@@ -774,7 +796,7 @@
     btnResetProduct.click();
   });
 
-  // تخزين المنتجات في مصفوفة للبحث
+  // كاش المنتجات للبحث
   let productsCache = [];
 
   onValue(ref(db, 'products'), snapshot => {
@@ -869,7 +891,7 @@
   searchNameInput.addEventListener('input', renderProductsTable);
   searchBarcodeInput.addEventListener('input', renderProductsTable);
 
-  // تحميل منتج للبيع
+  // تحميل منتج للبيـع
   function loadProductByBarcode(barcode) {
     const p = productsCache.find(pr => pr.barcode === barcode);
     if (!p) { alert('لم يتم العثور على منتج بهذا الباركود'); return; }
@@ -1030,7 +1052,7 @@
     alert('تم تسجيل حركة المخزون بنجاح');
   });
 
-  // تقرير فترة زمنية من dailyStats
+  // تقرير فترة زمنية
   rangeForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const from = fromDateInput.value;
