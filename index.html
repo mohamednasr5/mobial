@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
 
   <!-- html5-qrcode (سكان باركود) -->
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
 
   <!-- SheetJS لتصدير Excel -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
@@ -66,146 +66,322 @@
 
   <style>
     body {
-      background: radial-gradient(circle at top, #1e293b 0, #020617 55%, #000 100%);
-      color: #e5e7eb;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Tajawal", sans-serif;
+      min-height: 100vh;
     }
 
     .card {
       margin-bottom: 1rem;
-      border-radius: 1rem;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      background: rgba(15, 23, 42, 0.9);
-      box-shadow:
-        0 18px 35px rgba(0,0,0,0.55),
-        0 0 0 1px rgba(148,163,184,0.25);
+      border-radius: 12px;
+      border: 1px solid rgba(71, 85, 105, 0.3);
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
 
     .card-header {
-      background: linear-gradient(135deg, #22c55e, #0ea5e9, #6366f1);
-      color:#f9fafb;
-      border-radius:1rem 1rem 0 0!important;
-      font-weight:700;
-      letter-spacing: .03em;
+      background: linear-gradient(135deg, #059669 0%, #0284c7 50%, #7c3aed 100%);
+      color: #ffffff;
+      border-radius: 12px 12px 0 0 !important;
+      font-weight: 700;
+      padding: 1rem 1.25rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     }
 
     .table {
-      color:#e5e7eb;
+      color: #e2e8f0;
+      margin-bottom: 0;
     }
+    
     .table thead th {
-      background: linear-gradient(90deg,#0f172a,#020617);
-      color:#e5e7eb;
-      position:sticky;
-      top:0;
-      z-index:1;
-      border-bottom:1px solid #1f2937;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #f8fafc;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      border-bottom: 2px solid #334155;
+      font-weight: 600;
+      padding: 0.75rem 0.5rem;
+      white-space: nowrap;
     }
+    
+    .table tbody td {
+      padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+      vertical-align: middle;
+    }
+    
     .table tbody tr:hover {
-      background-color: rgba(15,23,42,0.8);
+      background-color: rgba(30, 41, 59, 0.9);
     }
 
-    .low-stock { background-color: rgba(250, 204, 21, 0.08)!important; }
-    .out-stock { background-color: rgba(248, 113, 113, 0.12)!important; }
-    .badge-low { background: linear-gradient(135deg,#facc15,#f97316); }
-    .badge-out { background: linear-gradient(135deg,#f97373,#ef4444); }
+    .low-stock { 
+      background-color: rgba(234, 179, 8, 0.15) !important; 
+      border-left: 4px solid #f59e0b;
+    }
+    
+    .out-stock { 
+      background-color: rgba(239, 68, 68, 0.15) !important; 
+      border-left: 4px solid #ef4444;
+    }
+    
+    .badge {
+      font-weight: 600;
+      padding: 0.35rem 0.65rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+    
+    .badge-low { 
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #1c1917;
+    }
+    
+    .badge-out { 
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #ffffff;
+    }
 
     .btn {
-      border-radius: 999px;
-      font-weight:600;
+      border-radius: 8px;
+      font-weight: 600;
       border: none;
       position: relative;
       overflow: hidden;
-      transform: translateY(0);
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-      box-shadow:
-        0 8px 16px rgba(15,23,42,0.7),
-        0 0 0 1px rgba(148,163,184,0.35);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem 1.25rem;
     }
+    
     .btn:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.05);
-      box-shadow:
-        0 14px 24px rgba(15,23,42,0.9),
-        0 0 0 1px rgba(148,163,184,0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
+    
     .btn:active {
-      transform: translateY(1px) scale(.98);
-      box-shadow:
-        0 4px 8px rgba(15,23,42,0.8),
-        0 0 0 1px rgba(30,64,175,0.6);
+      transform: translateY(0);
     }
 
-    .btn-primary { background: linear-gradient(135deg,#2563eb,#4f46e5); }
-    .btn-success { background: linear-gradient(135deg,#22c55e,#16a34a); }
-    .btn-warning { background: linear-gradient(135deg,#f97316,#facc15); color:#111827; }
-    .btn-info { background: linear-gradient(135deg,#06b6d4,#0ea5e9); }
-    .btn-outline-secondary,
-    .btn-outline-success {
-      background: linear-gradient(135deg,#0f172a,#020617);
-      color:#e5e7eb;
-      border:1px solid rgba(148,163,184,0.6);
+    .btn-primary { 
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #ffffff;
     }
+    
+    .btn-success { 
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+    }
+    
+    .btn-warning { 
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #1c1917;
+    }
+    
+    .btn-info { 
+      background: linear-gradient(135deg, #06b6d4, #0284c7);
+      color: #ffffff;
+    }
+    
+    .btn-danger { 
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #ffffff;
+    }
+    
+    .btn-outline-secondary {
+      background: transparent;
+      color: #cbd5e1;
+      border: 1px solid #64748b;
+    }
+    
+    .btn-outline-success {
+      background: transparent;
+      color: #86efac;
+      border: 1px solid #10b981;
+    }
+    
     .btn-outline-danger {
-      background: linear-gradient(135deg,#ef4444,#b91c1c);
-      color:#fee2e2;
-      border:1px solid rgba(248,113,113,0.8);
+      background: transparent;
+      color: #fca5a5;
+      border: 1px solid #ef4444;
     }
 
     .btn-icon {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:.35rem;
-      padding-inline: .9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
     }
 
     .app-title {
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      background: linear-gradient(90deg,#22c55e,#0ea5e9,#a855f7);
-      -webkit-background-clip:text;
-      color:transparent;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
     }
 
-    .scroll-table { max-height:260px; overflow-y:auto; }
+    .form-control, .form-select {
+      background-color: rgba(15, 23, 42, 0.7);
+      border: 1px solid #475569;
+      color: #f1f5f9;
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background-color: rgba(15, 23, 42, 0.9);
+      border-color: #3b82f6;
+      color: #f1f5f9;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .form-label {
+      color: #cbd5e1;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .input-group .btn {
+      border-radius: 0 8px 8px 0;
+    }
+
+    .scroll-table { 
+      max-height: 350px; 
+      overflow-y: auto;
+      border-radius: 8px;
+    }
+    
+    .scroll-table::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .scroll-table::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 10px;
+    }
+    
+    .scroll-table::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 10px;
+    }
 
     @media print {
-      .no-print { display:none!important; }
-      body { background-color:#fff; }
-      .card { box-shadow:none; }
+      .no-print { display: none !important; }
+      body { background-color: #fff; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+      .table { color: #000; }
     }
 
     #scannerWrapper {
-      border-radius: 1rem;
-      border:1px solid rgba(56,189,248,0.6);
-      box-shadow: 0 18px 45px rgba(8,47,73,0.9);
-      background: radial-gradient(circle at top,#0f172a,#020617);
-      padding:.75rem;
+      border-radius: 12px;
+      border: 2px solid #3b82f6;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      padding: 1rem;
+      margin-bottom: 1rem;
     }
+    
+    #reader {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
     #reader video {
-      border-radius:.75rem;
-      box-shadow: 0 12px 24px rgba(15,23,42,0.9);
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    /* مودال بسيط لتعديل المبيعات */
+    /* مودال تعديل المبيعات */
     #editSaleModal {
       position: fixed;
-      inset:0;
-      background: rgba(15,23,42,0.7);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:1050;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1050;
+      padding: 1rem;
     }
+    
     #editSaleModal .modal-content {
-      background:#0b1120;
-      border-radius:1rem;
-      padding:1rem 1.25rem;
-      max-width:400px;
-      width:100%;
-      box-shadow:0 20px 50px rgba(0,0,0,0.9);
-      border:1px solid rgba(148,163,184,.4);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(71, 85, 105, 0.5);
+      color: #f1f5f9;
+    }
+
+    .display-6 {
+      color: #f8fafc;
+      font-weight: 700;
+      margin: 0.5rem 0;
+    }
+
+    .list-group-item {
+      background-color: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(71, 85, 105, 0.3);
+      color: #e2e8f0;
+    }
+
+    .text-muted {
+      color: #94a3b8 !important;
+    }
+
+    hr {
+      border-color: #475569;
+      opacity: 0.5;
+    }
+
+    /* تحسين عرض الأرقام */
+    .card-body .display-6 {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    /* تخصيص ألوان الحقول للقراءة فقط */
+    .form-control[readonly] {
+      background-color: rgba(30, 41, 59, 0.5);
+      border-color: #475569;
+      color: #cbd5e1;
+    }
+
+    /* تحسين عرض الجداول على الشاشات الصغيرة */
+    @media (max-width: 768px) {
+      .table {
+        font-size: 0.9rem;
+      }
+      
+      .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+      }
+      
+      .app-title {
+        font-size: 1.5rem;
+      }
+      
+      .display-6 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -216,27 +392,24 @@
   <!-- رأس البرنامج + زر تصفير -->
   <div class="row mb-3 no-print">
     <div class="col-12 text-center">
-      <h3 class="app-title">برنامج الحسن للهواتف المحمولة</h3>
-      <p class="text-muted mb-1">مبيعات - مخزون - صيانة - إحصائيات - باركود - صلاحيات مستخدمين</p>
+      <h1 class="app-title">برنامج الحسن للهواتف المحمولة</h1>
+      <p class="text-muted mb-2">مبيعات - مخزون - صيانة - إحصائيات - باركود - صلاحيات مستخدمين</p>
     </div>
     <div class="col-12 text-center mt-2">
-      <button id="btnResetAll" class="btn btn-outline-danger btn-sm">
+      <button id="btnResetAll" class="btn btn-danger btn-sm btn-icon">
         🧨 تصفير بيانات المبيعات والأرباح
       </button>
     </div>
   </div>
 
-  <!-- شاشة الدخول مخفية -->
-  <div id="authSection" class="row justify-content-center no-print d-none"></div>
-
   <!-- شريط أعلى -->
-  <div id="topBar" class="row align-items-center mb-2 no-print">
+  <div id="topBar" class="row align-items-center mb-3 no-print">
     <div class="col-12 col-md-4">
-      <span class="fw-bold">مرحبًا بك في برنامج الحسن للهواتف المحمولة</span>
+      <span class="fw-bold text-info">مرحبًا بك في برنامج الحسن للهواتف المحمولة</span>
     </div>
 
     <div class="col-12 col-md-4 text-center mt-2 mt-md-0">
-      <span id="currentUserEmail" class="badge bg-primary">دخول مباشر (بدون حساب)</span>
+      <span id="currentUserEmail" class="badge bg-primary p-2">دخول مباشر (بدون حساب)</span>
     </div>
 
     <div class="col-12 col-md-4 text-end mt-2 mt-md-0">
@@ -244,430 +417,437 @@
     </div>
   </div>
 
-  <!-- التطبيق -->
-  <div id="appSection">
-
-    <!-- إحصائيات سريعة -->
-    <div class="row g-3 mb-3">
-      <div class="col-6 col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <div class="fw-bold">صافي ربح اليوم</div>
-            <div class="display-6" id="todayProfit">0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <div class="fw-bold">عدد القطع المباعة اليوم</div>
-            <div class="display-6" id="todaySoldQty">0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <div class="fw-bold">إجمالي عدد الأصناف</div>
-            <div class="display-6" id="totalProducts">0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <div class="card text-center">
-          <div class="card-body">
-            <div class="fw-bold">منتجات أوشكت على النفاد</div>
-            <div class="display-6" id="lowStockCount">0</div>
-          </div>
+  <!-- إحصائيات سريعة -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fw-bold text-success mb-2">صافي ربح اليوم</div>
+          <div class="display-6" id="todayProfit">0</div>
+          <small class="text-muted">ريال سعودي</small>
         </div>
       </div>
     </div>
 
-    <!-- منتجات + بحث + سكان -->
-    <div class="row g-3">
-      <div class="col-12 col-lg-4">
-        <div class="card">
-          <div class="card-header">إضافة / تعديل منتج</div>
-          <div class="card-body">
-            <form id="productForm" class="row g-2">
-              <input type="hidden" id="productId">
-
-              <div class="col-12">
-                <label class="form-label">اسم المنتج</label>
-                <input type="text" id="productName" class="form-control" required>
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">باركود المنتج</label>
-                <div class="input-group">
-                  <input type="text" id="productBarcode" class="form-control" placeholder="اكتب الباركود أو استخدم السكان">
-                  <button type="button" class="btn btn-icon" id="btnOpenScanner">📷 سكان</button>
-                </div>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">سعر الجملة</label>
-                <input type="number" min="0" step="0.01" id="productCost" class="form-control" required>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">الكمية الابتدائية</label>
-                <input type="number" min="0" step="1" id="productQty" class="form-control" required>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">حد تنبيه المخزون</label>
-                <input type="number" min="0" step="1" id="productMinStock" class="form-control" value="1">
-              </div>
-
-              <div class="col-12">
-                <button type="submit" class="btn btn-primary w-100">حفظ المنتج</button>
-              </div>
-
-              <div class="col-12">
-                <button type="button" class="btn btn-secondary w-100" id="btnResetProduct">تفريغ الحقول</button>
-              </div>
-
-            </form>
-          </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fw-bold text-info mb-2">عدد القطع المباعة اليوم</div>
+          <div class="display-6" id="todaySoldQty">0</div>
+          <small class="text-muted">قطعة</small>
         </div>
+      </div>
+    </div>
 
-        <!-- سكان باركود -->
-        <div class="card mt-3">
-          <div class="card-header">سكان باركود المنتج (اختياري)</div>
-          <div class="card-body">
-            <div id="scannerWrapper" class="d-none">
-              <div id="reader" style="width:100%;"></div>
-              <button class="btn btn-outline-danger w-100 mt-2" id="btnCloseScanner">إيقاف السكان</button>
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fw-bold text-warning mb-2">إجمالي عدد الأصناف</div>
+          <div class="display-6" id="totalProducts">0</div>
+          <small class="text-muted">منتج</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <div class="fw-bold text-danger mb-2">منتجات أوشكت على النفاد</div>
+          <div class="display-6" id="lowStockCount">0</div>
+          <small class="text-muted">تحتاج مراجعة</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- منتجات + بحث + سكان -->
+  <div class="row g-3">
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">إضافة / تعديل منتج</div>
+        <div class="card-body">
+          <form id="productForm" class="row g-3">
+            <input type="hidden" id="productId">
+
+            <div class="col-12">
+              <label class="form-label">اسم المنتج</label>
+              <input type="text" id="productName" class="form-control" required>
             </div>
-            <small class="text-muted">يعمل سكان الكاميرا فقط على https أو localhost مع إعطاء صلاحية الكاميرا للمتصفح.</small>
-          </div>
-        </div>
 
+            <div class="col-12">
+              <label class="form-label">باركود المنتج</label>
+              <div class="input-group">
+                <input type="text" id="productBarcode" class="form-control" placeholder="اكتب الباركود أو استخدم السكان">
+                <button type="button" class="btn btn-primary" id="btnOpenScanner">📷 سكان</button>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">سعر الجملة</label>
+              <input type="number" min="0" step="0.01" id="productCost" class="form-control" required>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">الكمية الابتدائية</label>
+              <input type="number" min="0" step="1" id="productQty" class="form-control" required>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">حد تنبيه المخزون</label>
+              <input type="number" min="0" step="1" id="productMinStock" class="form-control" value="1">
+            </div>
+
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn btn-success w-100 btn-icon">
+                💾 حفظ المنتج
+              </button>
+            </div>
+
+            <div class="col-12">
+              <button type="button" class="btn btn-outline-secondary w-100" id="btnResetProduct">
+                🔄 تفريغ الحقول
+              </button>
+            </div>
+
+          </form>
+        </div>
       </div>
 
-      <!-- جدول المنتجات + بحث -->
-      <div class="col-12 col-lg-8">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>قائمة المنتجات والمخزون الحالي</span>
-            <div class="no-print">
-              <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('productsSection')">🖨 طباعة</button>
-              <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('productsTable','Products')">📄 Excel</button>
-            </div>
+      <!-- سكان باركود -->
+      <div class="card mt-3">
+        <div class="card-header">سكان باركود المنتج</div>
+        <div class="card-body">
+          <div id="scannerWrapper" class="d-none">
+            <div id="reader"></div>
+            <button class="btn btn-danger w-100 mt-3" id="btnCloseScanner">إيقاف السكان</button>
           </div>
+          <div id="scannerPlaceholder" class="text-center">
+            <p class="text-muted">اضغط على زر "سكان" لفتح الماسح الضوئي</p>
+            <small class="text-info">💡 يعمل سكان الكاميرا فقط على https أو localhost مع إعطاء صلاحية الكاميرا للمتصفح.</small>
+          </div>
+        </div>
+      </div>
 
-          <div class="card-body" id="productsSection">
+    </div>
 
-            <div class="row mb-2 no-print">
-              <div class="col-12 col-md-6">
-                <input type="text" id="searchName" class="form-control" placeholder="بحث بالاسم">
-              </div>
-              <div class="col-12 col-md-6 mt-2 mt-md-0">
-                <input type="text" id="searchBarcode" class="form-control" placeholder="بحث بالباركود">
-              </div>
-            </div>
-
-            <div class="scroll-table">
-              <table class="table table-sm table-hover" id="productsTable">
-                <thead>
-                <tr>
-                  <th>الاسم</th>
-                  <th>باركود</th>
-                  <th>سعر الجملة</th>
-                  <th>المتوفر</th>
-                  <th>حد التنبيه</th>
-                  <th>حالة المخزون</th>
-                  <th class="no-print">إدارة</th>
-                </tr>
-                </thead>
-                <tbody id="productsBody"></tbody>
-              </table>
-            </div>
-
+    <!-- جدول المنتجات + بحث -->
+    <div class="col-12 col-lg-8">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>قائمة المنتجات والمخزون الحالي</span>
+          <div class="no-print">
+            <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('productsSection')">🖨 طباعة</button>
+            <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('productsTable','Products')">📄 Excel</button>
           </div>
         </div>
 
-        <!-- منتجات أوشكت على النفاد -->
-        <div class="card mt-3">
-          <div class="card-header">منتجات أوشكت على النفاد</div>
-          <div class="card-body">
+        <div class="card-body" id="productsSection">
+
+          <div class="row mb-3 no-print">
+            <div class="col-12 col-md-6">
+              <input type="text" id="searchName" class="form-control" placeholder="🔍 بحث بالاسم">
+            </div>
+            <div class="col-12 col-md-6 mt-2 mt-md-0">
+              <input type="text" id="searchBarcode" class="form-control" placeholder="🔍 بحث بالباركود">
+            </div>
+          </div>
+
+          <div class="scroll-table">
+            <table class="table table-sm table-hover" id="productsTable">
+              <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>باركود</th>
+                <th>سعر الجملة</th>
+                <th>المتوفر</th>
+                <th>حد التنبيه</th>
+                <th>حالة المخزون</th>
+                <th class="no-print">إدارة</th>
+              </tr>
+              </thead>
+              <tbody id="productsBody"></tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- منتجات أوشكت على النفاد -->
+      <div class="card mt-3">
+        <div class="card-header">⚠️ منتجات أوشكت على النفاد</div>
+        <div class="card-body">
+          <div class="scroll-table" style="max-height: 200px;">
             <ul class="list-group" id="lowStockList"></ul>
           </div>
         </div>
+      </div>
 
+    </div>
+  </div>
+
+  <!-- قسم البيع + حركات المخزون + مبيعات اليوم -->
+  <div class="row g-3 mt-3">
+
+    <!-- البيع -->
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">💰 بيع منتج (سعر حر)</div>
+        <div class="card-body">
+          <form id="saleForm" class="row g-3">
+
+            <div class="col-12">
+              <label class="form-label">باركود المنتج</label>
+              <div class="input-group">
+                <input type="text" id="saleBarcode" class="form-control" placeholder="اكتب أو امسح الباركود">
+                <button type="button" class="btn btn-primary" id="btnSaleScanner">📷 سكان</button>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">اسم المنتج</label>
+              <input type="text" id="saleProductName" class="form-control" readonly>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">سعر الجملة</label>
+              <input type="number" id="saleCost" class="form-control" readonly>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">المتوفر</label>
+              <input type="number" id="saleAvailableQty" class="form-control" readonly>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">سعر البيع</label>
+              <input type="number" min="0" step="0.01" id="salePrice" class="form-control" required>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">الكمية المباعة</label>
+              <input type="number" min="1" step="1" id="saleQty" class="form-control" required>
+            </div>
+
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn btn-success w-100 btn-icon">
+                ✅ تسجيل عملية البيع
+              </button>
+            </div>
+
+          </form>
+        </div>
       </div>
     </div>
 
-    <!-- قسم البيع + حركات المخزون + مبيعات اليوم -->
-    <div class="row g-3 mt-3">
+    <!-- حركة المخزون -->
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">📦 حركة المخزون (دخول/خروج)</div>
+        <div class="card-body">
+          <form id="stockMoveForm" class="row g-3">
 
-      <!-- البيع -->
-      <div class="col-12 col-lg-4">
-        <div class="card">
-          <div class="card-header">بيع منتج (سعر حر)</div>
-          <div class="card-body">
-            <form id="saleForm" class="row g-2">
-
-              <div class="col-12">
-                <label class="form-label">باركود المنتج</label>
-                <div class="input-group">
-                  <input type="text" id="saleBarcode" class="form-control" placeholder="اكتب أو امسح الباركود">
-                  <button type="button" class="btn btn-icon" id="btnSaleScanner">📷 سكان</button>
-                </div>
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">اسم المنتج</label>
-                <input type="text" id="saleProductName" class="form-control" readonly>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">سعر الجملة</label>
-                <input type="number" id="saleCost" class="form-control" readonly>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">المتوفر</label>
-                <input type="number" id="saleAvailableQty" class="form-control" readonly>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">سعر البيع</label>
-                <input type="number" min="0" step="0.01" id="salePrice" class="form-control" required>
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">الكمية المباعة</label>
-                <input type="number" min="1" step="1" id="saleQty" class="form-control" required>
-              </div>
-
-              <div class="col-12">
-                <button type="submit" class="btn btn-success w-100">تسجيل عملية البيع</button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- حركة المخزون -->
-      <div class="col-12 col-lg-4">
-        <div class="card">
-          <div class="card-header">حركة المخزون (دخول/خروج)</div>
-          <div class="card-body">
-
-            <form id="stockMoveForm" class="row g-2">
-
-              <div class="col-12">
-                <label class="form-label">باركود المنتج</label>
-                <input type="text" id="moveBarcode" class="form-control" placeholder="باركود المنتج">
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">نوع الحركة</label>
-                <select id="moveType" class="form-select">
-                  <option value="in">دخول (شراء / إضافة)</option>
-                  <option value="out">خروج (تسوية / تلف)</option>
-                </select>
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">الكمية</label>
-                <input type="number" min="1" step="1" id="moveQty" class="form-control" required>
-              </div>
-
-              <div class="col-12">
-                <label class="form-label">ملاحظات (اختياري)</label>
-                <input type="text" id="moveNote" class="form-control">
-              </div>
-
-              <div class="col-12">
-                <button type="submit" class="btn btn-warning w-100">تسجيل حركة المخزون</button>
-              </div>
-
-            </form>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- مبيعات اليوم + آخر حركات -->
-      <div class="col-12 col-lg-4">
-
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>مبيعات اليوم</span>
-            <div class="no-print">
-              <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('salesSection')">🖨 طباعة</button>
-              <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('salesTable','DailySales')">📄 Excel</button>
+            <div class="col-12">
+              <label class="form-label">باركود المنتج</label>
+              <input type="text" id="moveBarcode" class="form-control" placeholder="باركود المنتج">
             </div>
-          </div>
 
-          <div class="card-body" id="salesSection">
-            <div class="scroll-table">
-              <table class="table table-sm table-hover" id="salesTable">
-                <thead>
-                  <tr>
-                    <th>الوقت</th>
-                    <th>المنتج</th>
-                    <th>الكمية</th>
-                    <th>سعر الجملة</th>
-                    <th>سعر البيع</th>
-                    <th>صافي الربح</th>
-                    <th class="no-print">إدارة</th>
-                  </tr>
-                </thead>
-                <tbody id="salesBody"></tbody>
-              </table>
+            <div class="col-12">
+              <label class="form-label">نوع الحركة</label>
+              <select id="moveType" class="form-select">
+                <option value="in">دخول (شراء / إضافة)</option>
+                <option value="out">خروج (تسوية / تلف)</option>
+              </select>
             </div>
-          </div>
+
+            <div class="col-12">
+              <label class="form-label">الكمية</label>
+              <input type="number" min="1" step="1" id="moveQty" class="form-control" required>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">ملاحظات (اختياري)</label>
+              <textarea id="moveNote" class="form-control" rows="2"></textarea>
+            </div>
+
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn btn-warning w-100 btn-icon">
+                📝 تسجيل حركة المخزون
+              </button>
+            </div>
+
+          </form>
         </div>
-
-        <div class="card mt-3">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>آخر حركات المخزون</span>
-            <div class="no-print">
-              <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('stockMovesSection')">🖨 طباعة</button>
-              <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('stockMovesTable','StockMoves')">📄 Excel</button>
-            </div>
-          </div>
-
-          <div class="card-body" id="stockMovesSection">
-            <div class="scroll-table">
-              <table class="table table-sm table-hover" id="stockMovesTable">
-                <thead>
-                  <tr>
-                    <th>التاريخ</th>
-                    <th>باركود</th>
-                    <th>نوع</th>
-                    <th>كمية</th>
-                    <th>ملاحظات</th>
-                  </tr>
-                </thead>
-                <tbody id="stockMovesBody"></tbody>
-              </table>
-            </div>
-          </div>
-
-        </div>
-
       </div>
     </div>
 
-    <!-- إحصائيات الأيام السابقة + تقرير فترة -->
-    <div class="row g-3 mt-3">
+    <!-- مبيعات اليوم + آخر حركات -->
+    <div class="col-12 col-lg-4">
 
-      <!-- إحصائيات الأيام السابقة -->
-      <div class="col-12 col-lg-6">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>إحصائيات الأيام السابقة</span>
-            <div class="no-print">
-              <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('dailyStatsSection')">🖨</button>
-              <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('dailyStatsTable','DailyStats')">📄</button>
-            </div>
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>📊 مبيعات اليوم</span>
+          <div class="no-print">
+            <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('salesSection')">🖨 طباعة</button>
+            <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('salesTable','DailySales')">📄 Excel</button>
           </div>
-
-          <div class="card-body" id="dailyStatsSection">
-            <div class="scroll-table">
-              <table class="table table-sm table-hover" id="dailyStatsTable">
-                <thead>
-                  <tr>
-                    <th>التاريخ</th>
-                    <th>إجمالي الربح</th>
-                    <th>إجمالي الكمية المباعة</th>
-                    <th>عدد العمليات</th>
-                  </tr>
-                </thead>
-                <tbody id="dailyStatsBody"></tbody>
-              </table>
-            </div>
-          </div>
-
         </div>
-      </div>
 
-      <!-- تقرير فترة زمنية -->
-      <div class="col-12 col-lg-6">
-        <div class="card">
-          <div class="card-header">تقرير فترة زمنية</div>
-          <div class="card-body">
-
-            <form id="rangeForm" class="row g-2 no-print">
-              <div class="col-6">
-                <label class="form-label">من تاريخ</label>
-                <input type="date" id="fromDate" class="form-control">
-              </div>
-
-              <div class="col-6">
-                <label class="form-label">إلى تاريخ</label>
-                <input type="date" id="toDate" class="form-control">
-              </div>
-
-              <div class="col-12">
-                <button type="submit" class="btn btn-info w-100">عرض التقرير</button>
-              </div>
-            </form>
-
-            <hr>
-
-            <div class="scroll-table" id="rangeSection">
-              <table class="table table-sm table-hover" id="rangeTable">
-                <thead>
-                  <tr>
-                    <th>التاريخ</th>
-                    <th>إجمالي الربح</th>
-                    <th>إجمالي الكمية</th>
-                    <th>عدد العمليات</th>
-                  </tr>
-                </thead>
-                <tbody id="rangeBody"></tbody>
-
-                <tfoot>
-                  <tr class="table-secondary">
-                    <th>إجمالي الفترة</th>
-                    <th id="rangeTotalProfit">0</th>
-                    <th id="rangeTotalQty">0</th>
-                    <th id="rangeTotalSales">0</th>
-                  </tr>
-                </tfoot>
-
-              </table>
-            </div>
-
-            <div class="mt-2 no-print">
-              <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('rangeTable','PeriodReport')">📄 Excel</button>
-              <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('rangeSection')">🖨 طباعة</button>
-            </div>
-
+        <div class="card-body" id="salesSection">
+          <div class="scroll-table">
+            <table class="table table-sm table-hover" id="salesTable">
+              <thead>
+                <tr>
+                  <th>الوقت</th>
+                  <th>المنتج</th>
+                  <th>الكمية</th>
+                  <th>سعر الجملة</th>
+                  <th>سعر البيع</th>
+                  <th>صافي الربح</th>
+                  <th class="no-print">إدارة</th>
+                </tr>
+              </thead>
+              <tbody id="salesBody"></tbody>
+            </table>
           </div>
         </div>
       </div>
 
-    </div> <!-- /row -->
+      <div class="card mt-3 h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>🔄 آخر حركات المخزون</span>
+          <div class="no-print">
+            <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('stockMovesSection')">🖨 طباعة</button>
+            <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('stockMovesTable','StockMoves')">📄 Excel</button>
+          </div>
+        </div>
 
-  </div> <!-- /appSection -->
+        <div class="card-body" id="stockMovesSection">
+          <div class="scroll-table">
+            <table class="table table-sm table-hover" id="stockMovesTable">
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>باركود</th>
+                  <th>نوع</th>
+                  <th>كمية</th>
+                  <th>ملاحظات</th>
+                </tr>
+              </thead>
+              <tbody id="stockMovesBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-</div> <!-- /container -->
+    </div>
+  </div>
+
+  <!-- إحصائيات الأيام السابقة + تقرير فترة -->
+  <div class="row g-3 mt-3">
+
+    <!-- إحصائيات الأيام السابقة -->
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>📈 إحصائيات الأيام السابقة</span>
+          <div class="no-print">
+            <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('dailyStatsSection')">🖨</button>
+            <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('dailyStatsTable','DailyStats')">📄</button>
+          </div>
+        </div>
+
+        <div class="card-body" id="dailyStatsSection">
+          <div class="scroll-table">
+            <table class="table table-sm table-hover" id="dailyStatsTable">
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>إجمالي الربح</th>
+                  <th>إجمالي الكمية المباعة</th>
+                  <th>عدد العمليات</th>
+                </tr>
+              </thead>
+              <tbody id="dailyStatsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- تقرير فترة زمنية -->
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header">📅 تقرير فترة زمنية</div>
+        <div class="card-body">
+          <form id="rangeForm" class="row g-3 no-print">
+            <div class="col-6">
+              <label class="form-label">من تاريخ</label>
+              <input type="date" id="fromDate" class="form-control">
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">إلى تاريخ</label>
+              <input type="date" id="toDate" class="form-control">
+            </div>
+
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn btn-info w-100 btn-icon">
+                📊 عرض التقرير
+              </button>
+            </div>
+          </form>
+
+          <hr class="my-3">
+
+          <div class="scroll-table" id="rangeSection">
+            <table class="table table-sm table-hover" id="rangeTable">
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>إجمالي الربح</th>
+                  <th>إجمالي الكمية</th>
+                  <th>عدد العمليات</th>
+                </tr>
+              </thead>
+              <tbody id="rangeBody"></tbody>
+
+              <tfoot>
+                <tr class="table-active">
+                  <th>إجمالي الفترة</th>
+                  <th id="rangeTotalProfit">0</th>
+                  <th id="rangeTotalQty">0</th>
+                  <th id="rangeTotalSales">0</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="mt-3 no-print d-flex gap-2">
+            <button class="btn btn-sm btn-outline-success btn-icon flex-grow-1" onclick="exportTableToExcel('rangeTable','PeriodReport')">📄 Excel</button>
+            <button class="btn btn-sm btn-outline-secondary btn-icon flex-grow-1" onclick="printSection('rangeSection')">🖨 طباعة</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
 
 <!-- مودال تعديل المبيعات -->
 <div id="editSaleModal" class="no-print">
   <div class="modal-content">
-    <h5 class="mb-3">تعديل عملية بيع</h5>
+    <h5 class="mb-3 text-center">✏️ تعديل عملية بيع</h5>
     <input type="hidden" id="editSaleKey">
-    <div class="mb-2">
+    <div class="mb-3">
       <label class="form-label">اسم المنتج</label>
       <input type="text" id="editSaleProductName" class="form-control" readonly>
     </div>
-    <div class="mb-2">
+    <div class="mb-3">
       <label class="form-label">باركود</label>
       <input type="text" id="editSaleBarcode" class="form-control" readonly>
     </div>
-    <div class="row g-2 mb-2">
+    <div class="row g-3 mb-3">
       <div class="col-6">
         <label class="form-label">سعر الجملة</label>
         <input type="number" id="editSaleCost" class="form-control" readonly>
@@ -677,18 +857,17 @@
         <input type="number" id="editSalePrice" class="form-control">
       </div>
     </div>
-    <div class="mb-2">
+    <div class="mb-4">
       <label class="form-label">الكمية</label>
       <input type="number" id="editSaleQty" class="form-control">
     </div>
-    <div class="d-flex justify-content-between mt-3">
-      <button id="btnCancelEditSale" class="btn btn-secondary btn-sm">إلغاء</button>
-      <button id="btnSaveEditSale" class="btn btn-success btn-sm">حفظ التعديل</button>
+    <div class="d-flex justify-content-between gap-3">
+      <button id="btnCancelEditSale" class="btn btn-secondary btn-icon flex-grow-1">❌ إلغاء</button>
+      <button id="btnSaveEditSale" class="btn btn-success btn-icon flex-grow-1">💾 حفظ التعديل</button>
     </div>
   </div>
 </div>
 
-<!-- سكربت المشروع بالكامل -->
 <script>
   /* روابط Firebase */
   const db = window._db;
@@ -849,11 +1028,11 @@
       let trClass = '';
 
       if (p.qty <= 0) {
-        statusBadge = '<span class="badge badge-out text-white">نفد</span>';
+        statusBadge = '<span class="badge badge-out">نفد</span>';
         trClass = 'out-stock';
         addLowStockItem(p, 'نفد من المخزون');
       } else if (p.qty <= p.minStock) {
-        statusBadge = '<span class="badge badge-low text-dark">قرب النفاد</span>';
+        statusBadge = '<span class="badge badge-low">قرب النفاد</span>';
         trClass = 'low-stock';
         addLowStockItem(p, 'قرب النفاد');
       } else {
@@ -864,8 +1043,8 @@
       tr.className = trClass;
       tr.innerHTML = `
         <td>${p.name}</td>
-        <td>${p.barcode}</td>
-        <td>${p.cost}</td>
+        <td><code class="text-info">${p.barcode}</code></td>
+        <td>${p.cost.toFixed(2)}</td>
         <td>${p.qty}</td>
         <td>${p.minStock}</td>
         <td>${statusBadge}</td>
@@ -950,11 +1129,12 @@
     const p = productsCache.find(pr => pr.barcode === barcode);
     if (!p) {
       alert('لم يتم العثور على منتج بهذا الباركود');
-      return;
+      return false;
     }
     saleProductNameInput.value = p.name;
     saleCostInput.value = p.cost;
     saleAvailableQtyInput.value = p.qty;
+    return true;
   }
 
   saleBarcodeInput.addEventListener('change', function () {
@@ -1125,9 +1305,9 @@
             <td>${s.time}</td>
             <td>${s.productName}</td>
             <td>${s.qty}</td>
-            <td>${s.cost}</td>
-            <td>${s.price}</td>
-            <td>${s.profit}</td>
+            <td>${s.cost.toFixed(2)}</td>
+            <td>${s.price.toFixed(2)}</td>
+            <td class="text-success fw-bold">${s.profit.toFixed(2)}</td>
             <td class="no-print">
               <button class="btn btn-sm btn-outline-primary" onclick="openEditSaleModal('${key}')">تعديل</button>
             </td>
@@ -1158,12 +1338,16 @@
     if (!barcode) return alert('أدخل باركود المنتج');
     if (qty <= 0) return alert('كمية غير صحيحة');
 
-    const today = getTodayKey();
-    const nowTime = getTimeString();
-    const timestamp = Date.now();
-
     const product = productsCache.find(p => p.barcode === barcode);
     if (!product) return alert('لم يتم العثور على المنتج');
+
+    // طلب كلمة المرور للتأكيد
+    const pass = prompt('أدخل الرقم السري لتسجيل حركة المخزون:');
+    if (pass === null) return;
+    if (pass !== '521988') {
+      alert('رقم سرّي غير صحيح');
+      return;
+    }
 
     let newQty = product.qty || 0;
     if (type === 'in') newQty += qty;
@@ -1173,6 +1357,10 @@
     }
 
     updateDB(ref(db, 'products/' + product.id), { qty: newQty });
+
+    const today = getTodayKey();
+    const nowTime = getTimeString();
+    const timestamp = Date.now();
 
     const moveData = {
       barcode,
@@ -1187,6 +1375,7 @@
     const newMoveRef = push(ref(db, 'stockMoves'));
     setDB(newMoveRef, moveData);
 
+    moveBarcodeInput.value = '';
     moveQtyInput.value = '';
     moveNoteInput.value = '';
 
@@ -1208,8 +1397,8 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${m.date || ''} ${m.time || ''}</td>
-          <td>${m.barcode || ''}</td>
-          <td>${m.type === 'in' ? 'دخول' : 'خروج'}</td>
+          <td><code class="text-info">${m.barcode || ''}</code></td>
+          <td><span class="badge ${m.type === 'in' ? 'bg-success' : 'bg-danger'}">${m.type === 'in' ? 'دخول' : 'خروج'}</span></td>
           <td>${m.qty || 0}</td>
           <td>${m.note || ''}</td>
         `;
@@ -1231,7 +1420,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${dateKey}</td>
-          <td>${(s.totalProfit || 0).toFixed(2).replace(/\.00$/, '')}</td>
+          <td class="text-success fw-bold">${(s.totalProfit || 0).toFixed(2).replace(/\.00$/, '')}</td>
           <td>${s.totalQty || 0}</td>
           <td>${s.totalSalesCount || 0}</td>
         `;
@@ -1280,7 +1469,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${dateKey}</td>
-          <td>${dailyProfit.toFixed(2).replace(/\.00$/, '')}</td>
+          <td class="text-success fw-bold">${dailyProfit.toFixed(2).replace(/\.00$/, '')}</td>
           <td>${dailyQty}</td>
           <td>${dailySales}</td>
         `;
@@ -1293,96 +1482,124 @@
     });
   });
 
-  /* سكان الباركود للمنتج (إضافة) */
+  /* سكان الباركود - إصلاح المشكلة */
   let html5QrcodeScanner = null;
   const scannerWrapper = document.getElementById("scannerWrapper");
+  const scannerPlaceholder = document.getElementById("scannerPlaceholder");
   const btnOpenScanner = document.getElementById("btnOpenScanner");
   const btnCloseScanner = document.getElementById("btnCloseScanner");
+  const btnSaleScanner = document.getElementById("btnSaleScanner");
 
-  btnOpenScanner.addEventListener("click", function() {
-    if (html5QrcodeScanner) return;
-
-    scannerWrapper.classList.remove("d-none");
-    html5QrcodeScanner = new Html5Qrcode("reader");
-
-    Html5Qrcode.getCameras().then(cameras => {
+  // دالة لفتح الماسح للمنتجات
+  btnOpenScanner.addEventListener("click", async function() {
+    try {
+      scannerPlaceholder.classList.add("d-none");
+      scannerWrapper.classList.remove("d-none");
+      
+      if (html5QrcodeScanner) {
+        await html5QrcodeScanner.stop();
+        html5QrcodeScanner.clear();
+      }
+      
+      html5QrcodeScanner = new Html5Qrcode("reader");
+      
+      const cameras = await Html5Qrcode.getCameras();
       if (cameras && cameras.length) {
-        html5QrcodeScanner.start(
-          { facingMode: "environment" },
+        const cameraId = cameras[0].id;
+        
+        await html5QrcodeScanner.start(
+          cameraId,
           {
             fps: 10,
             qrbox: { width: 250, height: 250 }
           },
-          decodedText => {
+          (decodedText) => {
             productBarcodeInput.value = decodedText;
             closeScanner();
+            alert(`تم قراءة الباركود: ${decodedText}`);
           },
-          () => {}
+          (errorMessage) => {
+            // خطأ في القراءة، نستمر في المحاولة
+            console.log(errorMessage);
+          }
         );
+      } else {
+        alert("لم يتم العثور على كاميرا. تأكد من صلاحيات الكاميرا.");
+        closeScanner();
       }
-    }).catch(err => {
-      alert("تعذر تشغيل الكاميرا: " + err);
+    } catch (err) {
+      console.error("خطأ في الماسح:", err);
+      alert("خطأ في تشغيل الماسح: " + err.message);
       closeScanner();
-    });
+    }
   });
 
-  function closeScanner() {
-    if (html5QrcodeScanner) {
-      html5QrcodeScanner.stop().then(() => {
+  // دالة لفتح الماسح للمبيعات
+  btnSaleScanner.addEventListener("click", async function() {
+    try {
+      scannerPlaceholder.classList.add("d-none");
+      scannerWrapper.classList.remove("d-none");
+      
+      if (html5QrcodeScanner) {
+        await html5QrcodeScanner.stop();
+        html5QrcodeScanner.clear();
+      }
+      
+      html5QrcodeScanner = new Html5Qrcode("reader");
+      
+      const cameras = await Html5Qrcode.getCameras();
+      if (cameras && cameras.length) {
+        const cameraId = cameras[0].id;
+        
+        await html5QrcodeScanner.start(
+          cameraId,
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 }
+          },
+          async (decodedText) => {
+            saleBarcodeInput.value = decodedText;
+            const found = loadProductByBarcode(decodedText);
+            if (found) {
+              closeScanner();
+              alert(`تم تحميل المنتج: ${decodedText}`);
+            } else {
+              alert("المنتج غير موجود. حاول مسح باركود آخر.");
+            }
+          },
+          (errorMessage) => {
+            console.log(errorMessage);
+          }
+        );
+      } else {
+        alert("لم يتم العثور على كاميرا. تأكد من صلاحيات الكاميرا.");
+        closeScanner();
+      }
+    } catch (err) {
+      console.error("خطأ في الماسح:", err);
+      alert("خطأ في تشغيل الماسح: " + err.message);
+      closeScanner();
+    }
+  });
+
+  // دالة لإغلاق الماسح
+  async function closeScanner() {
+    try {
+      if (html5QrcodeScanner) {
+        await html5QrcodeScanner.stop();
         html5QrcodeScanner.clear();
         html5QrcodeScanner = null;
-        scannerWrapper.classList.add("d-none");
-      });
-    } else {
+      }
       scannerWrapper.classList.add("d-none");
+      scannerPlaceholder.classList.remove("d-none");
+    } catch (err) {
+      console.error("خطأ في إغلاق الماسح:", err);
+      scannerWrapper.classList.add("d-none");
+      scannerPlaceholder.classList.remove("d-none");
     }
   }
 
   btnCloseScanner.addEventListener("click", closeScanner);
-
-  /* سكان الباركود للبيع */
-  let saleScanner = null;
-  const btnSaleScanner = document.getElementById("btnSaleScanner");
-
-  btnSaleScanner.addEventListener("click", function() {
-    if (saleScanner) return;
-
-    scannerWrapper.classList.remove("d-none");
-    saleScanner = new Html5Qrcode("reader");
-
-    Html5Qrcode.getCameras().then(cameras => {
-      if (cameras && cameras.length) {
-        saleScanner.start(
-          { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 }
-          },
-          decodedText => {
-            saleBarcodeInput.value = decodedText;
-            loadProductByBarcode(decodedText);
-            closeSaleScanner();
-          },
-          () => {}
-        );
-      }
-    }).catch(err => {
-      alert("تعذر تشغيل الكاميرا: " + err);
-      closeSaleScanner();
-    });
-  });
-
-  function closeSaleScanner() {
-    if (saleScanner) {
-      saleScanner.stop().then(() => {
-        saleScanner.clear();
-        saleScanner = null;
-        scannerWrapper.classList.add("d-none");
-      });
-    } else {
-      scannerWrapper.classList.add("d-none");
-    }
-  }
 
   /* زر تصفير بيانات المبيعات والأرباح فقط */
   btnResetAll.addEventListener('click', function () {
@@ -1394,7 +1611,7 @@
       return;
     }
 
-    if (!confirm('سيتم حذف كل المبيعات، الإحصائيات اليومية، وحركات المخزون فقط. المنتجات لن تُحذف. هل أنت متأكد؟')) {
+    if (!confirm('⚠️ تحذير: سيتم حذف كل المبيعات، الإحصائيات اليومية، وحركات المخزون فقط. المنتجات لن تُحذف. هل أنت متأكد؟')) {
       return;
     }
 
@@ -1403,11 +1620,21 @@
       removeDB(ref(db, 'dailyStats')),
       removeDB(ref(db, 'stockMoves'))
     ]).then(() => {
-      alert('تم تصفير بيانات المبيعات والأرباح وحركات المخزون بنجاح');
+      alert('✅ تم تصفير بيانات المبيعات والأرباح وحركات المخزون بنجاح');
       location.reload();
     }).catch(err => {
-      alert('حدث خطأ أثناء التصفير: ' + err.message);
+      alert('❌ حدث خطأ أثناء التصفير: ' + err.message);
     });
+  });
+
+  // تعيين تواريخ افتراضية لتقرير الفترة
+  window.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const lastWeek = new Date();
+    lastWeek.setDate(today.getDate() - 7);
+    
+    fromDateInput.value = lastWeek.toISOString().split('T')[0];
+    toDateInput.value = today.toISOString().split('T')[0];
   });
 </script>
 
