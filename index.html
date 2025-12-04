@@ -522,7 +522,8 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <script src="https://unpkg.com/@zxing/library@0.18.6/umd/index.min.js"></script>
+
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -1018,131 +1019,42 @@
         });
 
         // Barcode Scanner - Simple Version (for GitHub Pages)
-        async function openScanner(mode) {
-            if (scannerActive) return;
-            
-            currentScannerMode = mode;
-            
-            try {
-                scannerPlaceholder.classList.add('d-none');
-                scannerWrapper.classList.remove('d-none');
-                scannerActive = true;
-                
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "environment" } 
-                });
-                
-                scannerStream = stream;
-                videoElement.srcObject = stream;
-                
-                // Start simple barcode detection (simulated)
-                startSimpleBarcodeDetection();
-                
-            } catch (err) {
-                alert('خطأ في تشغيل الكاميرا: ' + err.message);
-                closeScanner();
-            }
+       async function openScanner(mode) {
+    currentScannerMode = mode;
+
+    scannerPlaceholder.classList.add('d-none');
+    scannerWrapper.classList.remove('d-none');
+
+    const codeReader = new ZXing.BrowserMultiFormatReader();
+
+    try {
+        const videoInputDevices = await codeReader.listVideoInputDevices();
+
+        if (!videoInputDevices.length) {
+            alert("لا توجد كاميرا متاحة");
+            return;
         }
 
-        function startSimpleBarcodeDetection() {
-            // This is a simplified version for GitHub Pages
-            // In a real app, you would use a barcode library
-            
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            
-            function scanFrame() {
-                if (!scannerActive) return;
-                
-                try {
-                    if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-                        canvas.width = videoElement.videoWidth;
-                        canvas.height = videoElement.videoHeight;
-                        
-                        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                        
-                        // Simple barcode detection simulation
-                        // This would be replaced with actual barcode detection in a real app
-                        
-                        // For now, we'll just check for specific patterns in the image
-                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                        const detectedCode = simulateBarcodeDetection(imageData);
-                        
-                        if (detectedCode) {
-                            handleBarcodeDetected(detectedCode);
-                            return;
-                        }
-                    }
-                    
-                    // Continue scanning
-                    requestAnimationFrame(scanFrame);
-                } catch (err) {
-                    console.log('Scan error:', err);
-                    requestAnimationFrame(scanFrame);
-                }
-            }
-            
-            scanFrame();
-        }
+        // تشغيل الكاميرا الخلفية
+        const selectedDeviceId = videoInputDevices[videoInputDevices.length - 1].deviceId;
 
-        function simulateBarcodeDetection(imageData) {
-            // This is a simulation - in a real app, use a proper barcode library
-            // For GitHub Pages, we'll simulate detection by looking for patterns
-            
-            const data = imageData.data;
-            
-            // Simple pattern detection (this is just a simulation)
-            let darkCount = 0;
-            let lightCount = 0;
-            
-            for (let i = 0; i < data.length; i += 4) {
-                const r = data[i];
-                const g = data[i + 1];
-                const b = data[i + 2];
-                const brightness = (r + g + b) / 3;
-                
-                if (brightness < 128) {
-                    darkCount++;
-                } else {
-                    lightCount++;
-                }
+        codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, err) => {
+            if (result) {
+                handleBarcodeDetected(result.text);
+                codeReader.reset();
             }
-            
-            // If we have significant contrast, simulate finding a barcode
-            const contrastRatio = Math.abs(darkCount - lightCount) / (darkCount + lightCount);
-            
-            if (contrastRatio > 0.3) {
-                // Generate a simulated barcode number
-                return 'SIM-' + Date.now().toString().slice(-8);
-            }
-            
-            return null;
-        }
+        });
+    } catch (error) {
+        alert("حدث خطأ في تشغيل الماسح: " + error);
+    }
+}
 
-        function handleBarcodeDetected(barcode) {
-            closeScanner();
-            
-            if (currentScannerMode === 'product') {
-                productBarcodeInput.value = barcode;
-                alert('تم اكتشاف باركود: ' + barcode);
-            } else if (currentScannerMode === 'sale') {
-                saleBarcodeInput.value = barcode;
-                loadProductByBarcode(barcode);
-            }
-        }
-
-        function closeScanner() {
-            scannerActive = false;
-            scannerWrapper.classList.add('d-none');
-            scannerPlaceholder.classList.remove('d-none');
-            
-            if (scannerStream) {
-                scannerStream.getTracks().forEach(track => track.stop());
-                scannerStream = null;
-            }
-            
-            videoElement.srcObject = null;
-        }
+function closeScanner() {
+    scannerWrapper.classList.add('d-none');
+    scannerPlaceholder.classList.remove('d-none');
+    videoElement.srcObject = null;
+    ZXing.BrowserMultiFormatReader.reset;
+}
 
         // Scanner Event Listeners
         btnOpenScanner.addEventListener('click', () => openScanner('product'));
