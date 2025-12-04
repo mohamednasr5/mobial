@@ -1,3 +1,5 @@
+هل الكود يعمل بطلاقة ام لا
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -19,22 +21,16 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
     import {
-      getDatabase,
-      ref,
-      push,
-      set,
-      update,
-      onValue,
-      get,
-      child
+      getDatabase, ref, push, set, update, onValue, get, child
     } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
     import {
       getAuth,
       onAuthStateChanged,
       signInWithEmailAndPassword,
       signOut,
-      createUserWithEmailAndPassword
-    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"; /* [web:52][web:56][web:59] */
+      createUserWithEmailAndPassword,
+      updatePassword
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAoZE2KL3APojd929VEbhSv914jzDv90wA",
@@ -66,6 +62,7 @@
     window._signInWithEmailAndPassword = signInWithEmailAndPassword;
     window._signOut = signOut;
     window._createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window._updatePassword = updatePassword;
   </script>
 
   <style>
@@ -73,9 +70,24 @@
       background-color: #f5f5f5;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
-    .card { margin-bottom: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.08); border-radius: 0.75rem; }
-    .card-header { background: linear-gradient(135deg, #0d6efd, #20c997); color:#fff; border-radius:0.75rem 0.75rem 0 0!important; font-weight:600; }
-    .table thead th { background-color:#0d6efd; color:#fff; position:sticky; top:0; z-index:1; }
+    .card {
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      border-radius: 0.75rem;
+    }
+    .card-header {
+      background: linear-gradient(135deg, #0d6efd, #20c997);
+      color:#fff;
+      border-radius:0.75rem 0.75rem 0 0!important;
+      font-weight:600;
+    }
+    .table thead th {
+      background-color:#0d6efd;
+      color:#fff;
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
     .low-stock { background-color:#fff3cd!important; }
     .out-stock { background-color:#f8d7da!important; }
     .badge-low { background-color:#ffc107; }
@@ -88,10 +100,20 @@
       body { background-color:#fff; }
       .card { box-shadow:none; }
     }
+
+    /* زر إظهار/اخفاء كلمة المرور */
+    .password-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 20px;
+    }
   </style>
 </head>
-<body>
 
+<body>
 <div class="container-fluid py-3">
 
   <!-- رأس البرنامج -->
@@ -108,50 +130,63 @@
       <div class="card">
         <div class="card-header text-center">تسجيل الدخول</div>
         <div class="card-body">
+
+          <!-- نموذج تسجيل الدخول -->
           <form id="loginForm" class="row g-2">
             <div class="col-12">
               <label class="form-label">البريد الإلكتروني</label>
               <input type="email" id="loginEmail" class="form-control" required>
             </div>
-            <div class="col-12">
+
+            <div class="col-12 position-relative">
               <label class="form-label">كلمة المرور</label>
               <input type="password" id="loginPassword" class="form-control" required>
             </div>
+
             <div class="col-12">
               <button type="submit" class="btn btn-primary w-100">دخول</button>
             </div>
           </form>
+
           <hr>
+
+          <!-- نموذج إنشاء الأدمن -->
           <form id="registerForm" class="row g-2">
             <div class="col-12">
               <label class="form-label">إنشاء مستخدم أدمن (مرة واحدة فقط)</label>
             </div>
+
             <div class="col-12">
               <input type="email" id="registerEmail" class="form-control" placeholder="بريد الأدمن">
             </div>
-            <div class="col-12">
+
+            <div class="col-12 position-relative">
               <input type="password" id="registerPassword" class="form-control" placeholder="كلمة المرور">
             </div>
+
             <div class="col-12">
-              <button type="submit" class="btn btn-outline-success w-100">إنشاء مستخدم أدمن</button>
+              <button type="submit" class="btn btn-outline-success w-100">إنشاء أدمن</button>
             </div>
           </form>
+
           <div class="mt-2">
-            <small class="text-muted">يمكن إنشاء أدمن واحد فقط، بعد ذلك استخدم شاشة تسجيل الدخول العادية.</small>
+            <small class="text-muted">يمكن إنشاء أدمن واحد فقط، بعد ذلك استخدم شاشة تسجيل الدخول فقط.</small>
           </div>
+
         </div>
       </div>
     </div>
   </div>
-
   <!-- شريط أعلى بعد الدخول -->
   <div id="topBar" class="row align-items-center mb-2 d-none no-print">
     <div class="col-12 col-md-4">
-      <span class="fw-bold">مرحبا بك في برنامج الحسن للهواتف المحمولة</span>
+      <span class="fw-bold">مرحبًا بك في برنامج الحسن للهواتف المحمولة</span>
     </div>
+
     <div class="col-12 col-md-4 text-center mt-2 mt-md-0">
       <span id="currentUserEmail" class="badge bg-primary"></span>
     </div>
+
     <div class="col-12 col-md-4 text-end mt-2 mt-md-0">
       <button class="btn btn-sm btn-outline-danger" id="btnLogout">تسجيل الخروج</button>
     </div>
@@ -170,6 +205,7 @@
           </div>
         </div>
       </div>
+
       <div class="col-6 col-md-3">
         <div class="card text-center">
           <div class="card-body">
@@ -178,6 +214,7 @@
           </div>
         </div>
       </div>
+
       <div class="col-6 col-md-3">
         <div class="card text-center">
           <div class="card-body">
@@ -186,6 +223,7 @@
           </div>
         </div>
       </div>
+
       <div class="col-6 col-md-3">
         <div class="card text-center">
           <div class="card-body">
@@ -204,10 +242,12 @@
           <div class="card-body">
             <form id="productForm" class="row g-2">
               <input type="hidden" id="productId">
+
               <div class="col-12">
                 <label class="form-label">اسم المنتج</label>
                 <input type="text" id="productName" class="form-control" required>
               </div>
+
               <div class="col-12">
                 <label class="form-label">باركود المنتج</label>
                 <div class="input-group">
@@ -215,24 +255,30 @@
                   <button type="button" class="btn btn-outline-secondary btn-icon" id="btnOpenScanner">📷 سكان</button>
                 </div>
               </div>
+
               <div class="col-6">
                 <label class="form-label">سعر الجملة</label>
                 <input type="number" min="0" step="0.01" id="productCost" class="form-control" required>
               </div>
+
               <div class="col-6">
                 <label class="form-label">الكمية الابتدائية</label>
                 <input type="number" min="0" step="1" id="productQty" class="form-control" required>
               </div>
+
               <div class="col-6">
                 <label class="form-label">حد تنبيه المخزون</label>
                 <input type="number" min="0" step="1" id="productMinStock" class="form-control" value="1">
               </div>
+
               <div class="col-12">
                 <button type="submit" class="btn btn-primary w-100">حفظ المنتج</button>
               </div>
+
               <div class="col-12">
                 <button type="button" class="btn btn-secondary w-100" id="btnResetProduct">تفريغ الحقول</button>
               </div>
+
             </form>
           </div>
         </div>
@@ -248,8 +294,8 @@
             <small class="text-muted">يعمل سكان الكاميرا فقط على https أو localhost مع إعطاء صلاحية الكاميرا للمتصفح.</small>
           </div>
         </div>
-      </div>
 
+      </div>
       <!-- جدول المنتجات + بحث -->
       <div class="col-12 col-lg-8">
         <div class="card">
@@ -260,7 +306,9 @@
               <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('productsTable','Products')">📄 Excel</button>
             </div>
           </div>
+
           <div class="card-body" id="productsSection">
+
             <div class="row mb-2 no-print">
               <div class="col-12 col-md-6">
                 <input type="text" id="searchName" class="form-control" placeholder="بحث بالاسم">
@@ -269,6 +317,7 @@
                 <input type="text" id="searchBarcode" class="form-control" placeholder="بحث بالباركود">
               </div>
             </div>
+
             <div class="scroll-table">
               <table class="table table-sm table-hover" id="productsTable">
                 <thead>
@@ -285,6 +334,7 @@
                 <tbody id="productsBody"></tbody>
               </table>
             </div>
+
           </div>
         </div>
 
@@ -295,17 +345,21 @@
             <ul class="list-group" id="lowStockList"></ul>
           </div>
         </div>
+
       </div>
     </div>
 
+
     <!-- قسم البيع + حركات المخزون + مبيعات اليوم -->
     <div class="row g-3 mt-3">
+
       <!-- البيع -->
       <div class="col-12 col-lg-4">
         <div class="card">
           <div class="card-header">بيع منتج (سعر حر)</div>
           <div class="card-body">
             <form id="saleForm" class="row g-2">
+
               <div class="col-12">
                 <label class="form-label">باركود المنتج</label>
                 <div class="input-group">
@@ -313,44 +367,55 @@
                   <button type="button" class="btn btn-outline-secondary btn-icon" id="btnSaleScanner">📷 سكان</button>
                 </div>
               </div>
+
               <div class="col-12">
                 <label class="form-label">اسم المنتج</label>
                 <input type="text" id="saleProductName" class="form-control" readonly>
               </div>
+
               <div class="col-6">
                 <label class="form-label">سعر الجملة</label>
                 <input type="number" id="saleCost" class="form-control" readonly>
               </div>
+
               <div class="col-6">
                 <label class="form-label">المتوفر</label>
                 <input type="number" id="saleAvailableQty" class="form-control" readonly>
               </div>
+
               <div class="col-6">
                 <label class="form-label">سعر البيع</label>
                 <input type="number" min="0" step="0.01" id="salePrice" class="form-control" required>
               </div>
+
               <div class="col-6">
                 <label class="form-label">الكمية المباعة</label>
                 <input type="number" min="1" step="1" id="saleQty" class="form-control" required>
               </div>
+
               <div class="col-12">
                 <button type="submit" class="btn btn-success w-100">تسجيل عملية البيع</button>
               </div>
+
             </form>
           </div>
         </div>
       </div>
+
 
       <!-- حركة المخزون -->
       <div class="col-12 col-lg-4">
         <div class="card">
           <div class="card-header">حركة المخزون (دخول/خروج)</div>
           <div class="card-body">
+
             <form id="stockMoveForm" class="row g-2">
+
               <div class="col-12">
                 <label class="form-label">باركود المنتج</label>
                 <input type="text" id="moveBarcode" class="form-control" placeholder="باركود المنتج">
               </div>
+
               <div class="col-12">
                 <label class="form-label">نوع الحركة</label>
                 <select id="moveType" class="form-select">
@@ -358,24 +423,31 @@
                   <option value="out">خروج (تسوية / تلف)</option>
                 </select>
               </div>
+
               <div class="col-12">
                 <label class="form-label">الكمية</label>
                 <input type="number" min="1" step="1" id="moveQty" class="form-control" required>
               </div>
+
               <div class="col-12">
                 <label class="form-label">ملاحظات (اختياري)</label>
                 <input type="text" id="moveNote" class="form-control">
               </div>
+
               <div class="col-12">
                 <button type="submit" class="btn btn-warning w-100">تسجيل حركة المخزون</button>
               </div>
+
             </form>
+
           </div>
         </div>
       </div>
 
-      <!-- مبيعات اليوم + آخر حركات -->
+
+      <!-- مبيعات اليوم -->
       <div class="col-12 col-lg-4">
+
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <span>مبيعات اليوم</span>
@@ -384,24 +456,26 @@
               <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('salesTable','DailySales')">📄 Excel</button>
             </div>
           </div>
+
           <div class="card-body" id="salesSection">
             <div class="scroll-table">
               <table class="table table-sm table-hover" id="salesTable">
                 <thead>
-                <tr>
-                  <th>الوقت</th>
-                  <th>المنتج</th>
-                  <th>الكمية</th>
-                  <th>سعر الجملة</th>
-                  <th>سعر البيع</th>
-                  <th>صافي الربح</th>
-                </tr>
+                  <tr>
+                    <th>الوقت</th>
+                    <th>المنتج</th>
+                    <th>الكمية</th>
+                    <th>سعر الجملة</th>
+                    <th>سعر البيع</th>
+                    <th>صافي الربح</th>
+                  </tr>
                 </thead>
                 <tbody id="salesBody"></tbody>
               </table>
             </div>
           </div>
         </div>
+
 
         <div class="card mt-3">
           <div class="card-header d-flex justify-content-between align-items-center">
@@ -411,52 +485,58 @@
               <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('stockMovesTable','StockMoves')">📄 Excel</button>
             </div>
           </div>
+
           <div class="card-body" id="stockMovesSection">
             <div class="scroll-table">
               <table class="table table-sm table-hover" id="stockMovesTable">
                 <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>باركود</th>
-                  <th>نوع</th>
-                  <th>كمية</th>
-                  <th>ملاحظات</th>
-                </tr>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>باركود</th>
+                    <th>نوع</th>
+                    <th>كمية</th>
+                    <th>ملاحظات</th>
+                  </tr>
                 </thead>
                 <tbody id="stockMovesBody"></tbody>
               </table>
             </div>
           </div>
+
         </div>
+
       </div>
     </div>
-
     <!-- إحصائيات الأيام السابقة + تقرير فترة -->
     <div class="row g-3 mt-3">
+
+      <!-- إحصائيات الأيام السابقة -->
       <div class="col-12 col-lg-6">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <span>إحصائيات الأيام السابقة</span>
             <div class="no-print">
-              <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('dailyStatsSection')">🖨 طباعة</button>
-              <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('dailyStatsTable','DailyStats')">📄 Excel</button>
+              <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('dailyStatsSection')">🖨</button>
+              <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('dailyStatsTable','DailyStats')">📄</button>
             </div>
           </div>
+
           <div class="card-body" id="dailyStatsSection">
             <div class="scroll-table">
               <table class="table table-sm table-hover" id="dailyStatsTable">
                 <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>إجمالي الربح</th>
-                  <th>إجمالي الكمية المباعة</th>
-                  <th>عدد العمليات</th>
-                </tr>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>إجمالي الربح</th>
+                    <th>إجمالي الكمية المباعة</th>
+                    <th>عدد العمليات</th>
+                  </tr>
                 </thead>
                 <tbody id="dailyStatsBody"></tbody>
               </table>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -465,55 +545,70 @@
         <div class="card">
           <div class="card-header">تقرير فترة زمنية</div>
           <div class="card-body">
+
             <form id="rangeForm" class="row g-2 no-print">
               <div class="col-6">
                 <label class="form-label">من تاريخ</label>
                 <input type="date" id="fromDate" class="form-control">
               </div>
+
               <div class="col-6">
                 <label class="form-label">إلى تاريخ</label>
                 <input type="date" id="toDate" class="form-control">
               </div>
+
               <div class="col-12">
                 <button type="submit" class="btn btn-info w-100">عرض التقرير</button>
               </div>
             </form>
+
             <hr>
+
             <div class="scroll-table" id="rangeSection">
               <table class="table table-sm table-hover" id="rangeTable">
                 <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>إجمالي الربح</th>
-                  <th>إجمالي الكمية</th>
-                  <th>عدد العمليات</th>
-                </tr>
+                  <tr>
+                    <th>التاريخ</th>
+                    <th>إجمالي الربح</th>
+                    <th>إجمالي الكمية</th>
+                    <th>عدد العمليات</th>
+                  </tr>
                 </thead>
                 <tbody id="rangeBody"></tbody>
+
                 <tfoot>
-                <tr class="table-secondary">
-                  <th>إجمالي الفترة</th>
-                  <th id="rangeTotalProfit">0</th>
-                  <th id="rangeTotalQty">0</th>
-                  <th id="rangeTotalSales">0</th>
-                </tr>
+                  <tr class="table-secondary">
+                    <th>إجمالي الفترة</th>
+                    <th id="rangeTotalProfit">0</th>
+                    <th id="rangeTotalQty">0</th>
+                    <th id="rangeTotalSales">0</th>
+                  </tr>
                 </tfoot>
+
               </table>
             </div>
+
             <div class="mt-2 no-print">
               <button class="btn btn-sm btn-outline-success btn-icon" onclick="exportTableToExcel('rangeTable','PeriodReport')">📄 Excel</button>
               <button class="btn btn-sm btn-outline-secondary btn-icon" onclick="printSection('rangeSection')">🖨 طباعة</button>
             </div>
+
           </div>
         </div>
       </div>
-    </div>
+
+    </div> <!-- /row -->
+
 
   </div> <!-- /appSection -->
+
 </div> <!-- /container -->
 
-<!-- سكربت عام -->
+
+<!-- بداية سكربت المشروع بالكامل -->
 <script>
+
+  /* روابط Firebase */
   const db = window._db;
   const ref = window._ref;
   const push = window._push;
@@ -527,7 +622,10 @@
   const signInWithEmailAndPassword = window._signInWithEmailAndPassword;
   const signOut = window._signOut;
   const createUserWithEmailAndPassword = window._createUserWithEmailAndPassword;
+  const updatePassword = window._updatePassword;
 
+
+  /* دوال التاريخ والوقت العامة */
   function getTodayKey() {
     const d = new Date();
     const yyyy = d.getFullYear();
@@ -535,6 +633,7 @@
     const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   }
+
   function getTimeString() {
     const d = new Date();
     const hh = String(d.getHours()).padStart(2, '0');
@@ -543,6 +642,7 @@
     return `${hh}:${mm}:${ss}`;
   }
 
+  /* الطباعة */
   function printSection(sectionId) {
     const printContent = document.getElementById(sectionId).innerHTML;
     const originalContent = document.body.innerHTML;
@@ -553,6 +653,8 @@
   }
   window.printSection = printSection;
 
+
+  /* التصدير إلى Excel */
   function exportTableToExcel(tableId, fileName) {
     const table = document.getElementById(tableId);
     if (!table) return;
@@ -562,90 +664,204 @@
     XLSX.writeFile(wb, fileName + ".xlsx");
   }
   window.exportTableToExcel = exportTableToExcel;
-
-  // عناصر auth
+  /* عناصر auth */
   const authSection = document.getElementById('authSection');
   const appSection = document.getElementById('appSection');
   const topBar = document.getElementById('topBar');
   const currentUserEmail = document.getElementById('currentUserEmail');
+
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
+
   const loginEmail = document.getElementById('loginEmail');
   const loginPassword = document.getElementById('loginPassword');
+
   const registerEmail = document.getElementById('registerEmail');
   const registerPassword = document.getElementById('registerPassword');
+
   const btnLogout = document.getElementById('btnLogout');
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      authSection.classList.add('d-none');
-      appSection.classList.remove('d-none');
-      topBar.classList.remove('d-none');
-      currentUserEmail.textContent = user.email || '';
-    } else {
-      authSection.classList.remove('d-none');
-      appSection.classList.add('d-none');
-      topBar.classList.add('d-none');
-      currentUserEmail.textContent = '';
+
+  /* ───────────────────────────────────────
+      🔐 إظهار / إخفاء كلمة المرور
+  ─────────────────────────────────────── */
+  function addPasswordToggle(inputId) {
+    const input = document.getElementById(inputId);
+    const wrapper = input.parentElement;
+
+    const eye = document.createElement("span");
+    eye.textContent = "👁️";
+    eye.className = "password-eye";
+
+    eye.addEventListener("click", () => {
+      if (input.type === "password") {
+        input.type = "text";
+        eye.textContent = "👁️‍🗨️";
+      } else {
+        input.type = "password";
+        eye.textContent = "👁️";
+      }
+    });
+
+    wrapper.appendChild(eye);
+  }
+
+  addPasswordToggle("loginPassword");
+  addPasswordToggle("registerPassword");
+
+
+  /* ───────────────────────────────────────
+      🔐 إخفاء نموذج تسجيل الأدمن إذا كان موجود مسبقًا
+  ─────────────────────────────────────── */
+  const adminRef = ref(db, "settings/admin");
+
+  getDB(adminRef).then(snap => {
+    if (snap.exists()) {
+      registerForm.classList.add("d-none");
     }
   });
 
-  // تسجيل الدخول
-  loginForm.addEventListener('submit', function(e) {
+
+  /* ───────────────────────────────────────
+      🔐 تسجيل الدخول
+  ─────────────────────────────────────── */
+  loginForm.addEventListener("submit", function(e) {
     e.preventDefault();
+
     signInWithEmailAndPassword(auth, loginEmail.value.trim(), loginPassword.value)
-      .then(() => {
-        loginPassword.value = '';
-      })
-      .catch(err => alert('فشل تسجيل الدخول: ' + err.message));
+      .then(() => loginPassword.value = "")
+      .catch(err => alert("فشل تسجيل الدخول: " + err.message));
   });
 
-  // إنشاء أدمن واحد فقط
-  registerForm.addEventListener('submit', function(e) {
+
+  /* ───────────────────────────────────────
+      🔐 إنشاء أدمن واحد فقط
+  ─────────────────────────────────────── */
+  registerForm.addEventListener("submit", function(e) {
     e.preventDefault();
+
     const email = registerEmail.value.trim();
     const pass = registerPassword.value;
 
-    if (!email || !pass) {
-      alert('أدخل بريد وكلمة مرور لإنشاء الأدمن');
-      return;
-    }
+    if (!email || !pass) return alert("أدخل بريد وكلمة مرور.");
 
-    const adminRef = ref(db, 'settings/admin');
-    getDB(adminRef).then(adminSnap => {
-      if (adminSnap.exists()) {
-        alert('تم إنشاء أدمن من قبل ولا يمكن إنشاء أدمن آخر.');
-        registerEmail.value = '';
-        registerPassword.value = '';
+    getDB(adminRef).then(snap => {
+      if (snap.exists()) {
+        alert("تم إنشاء الأدمن بالفعل.");
         return;
       }
 
       createUserWithEmailAndPassword(auth, email, pass)
-        .then((cred) => {
-          const uid = cred.user.uid;
-          const adminData = {
-            uid: uid,
+        .then(cred => {
+          setDB(adminRef, {
+            uid: cred.user.uid,
             email: email,
             createdAt: Date.now()
-          };
-          setDB(adminRef, adminData);
-          alert('تم إنشاء مستخدم أدمن واحد فقط بنجاح، لا يمكن إنشاء أدمن آخر.');
-          registerEmail.value = '';
-          registerPassword.value = '';
+          });
+
+          alert("تم إنشاء الأدمن بنجاح.");
+          registerForm.classList.add("d-none");
+
         })
-        .catch(err => {
-          alert('خطأ في إنشاء الأدمن: ' + err.message);
-        });
-    }).catch(err => {
-      alert('تعذر التحقق من حالة الأدمن: ' + err.message);
+        .catch(err => alert("خطأ: " + err.message));
     });
+
   });
 
-  btnLogout.addEventListener('click', function() {
-    signOut(auth);
+
+  /* ───────────────────────────────────────
+      👑 عرض لوحة تحكم الأدمن
+  ─────────────────────────────────────── */
+  function createAdminPanel() {
+    const panel = document.createElement("div");
+    panel.className = "card mt-3 no-print";
+
+    panel.innerHTML = `
+      <div class="card-header bg-dark text-white">👨‍💻 لوحة إدارة الأدمن</div>
+      <div class="card-body">
+
+        <h6 class="fw-bold">➕ إضافة مستخدم جديد</h6>
+        <div class="row g-2 mb-3">
+          <div class="col-12"><input id="newUserEmail" type="email" class="form-control" placeholder="البريد"></div>
+          <div class="col-12 position-relative"><input id="newUserPassword" type="password" class="form-control" placeholder="كلمة المرور"></div>
+          <div class="col-12"><button class="btn btn-success w-100" id="btnCreateUser">إنشاء</button></div>
+        </div>
+
+        <hr>
+
+        <h6 class="fw-bold">🔄 تغيير كلمة المرور</h6>
+        <div class="row g-2">
+          <div class="col-12 position-relative"><input id="newPassword" type="password" class="form-control" placeholder="كلمة مرور جديدة"></div>
+          <div class="col-12"><button class="btn btn-warning w-100" id="btnChangePassword">تغيير</button></div>
+        </div>
+
+      </div>
+    `;
+
+    document.getElementById("appSection").prepend(panel);
+
+    addPasswordToggle("newUserPassword");
+    addPasswordToggle("newPassword");
+
+    // زر إنشاء المستخدم الجديد
+    document.getElementById("btnCreateUser").onclick = function() {
+      const email = document.getElementById("newUserEmail").value.trim();
+      const pass = document.getElementById("newUserPassword").value.trim();
+
+      if (!email || !pass) return alert("أدخل البيانات كاملة.");
+
+      createUserWithEmailAndPassword(auth, email, pass)
+        .then(() => alert("تم إنشاء المستخدم بنجاح"))
+        .catch(err => alert("خطأ: " + err.message));
+    };
+
+    // تغيير كلمة المرور
+    document.getElementById("btnChangePassword").onclick = function() {
+      const newPass = document.getElementById("newPassword").value.trim();
+      if (!newPass) return alert("أدخل كلمة المرور الجديدة");
+
+      updatePassword(auth.currentUser, newPass)
+        .then(() => alert("تم تغيير كلمة المرور"))
+        .catch(err => alert("خطأ: " + err.message));
+    };
+  }
+
+
+  /* ───────────────────────────────────────
+      🔐 التحكم في واجهة الدخول / التطبيق
+  ─────────────────────────────────────── */
+  onAuthStateChanged(auth, user => {
+    if (user) {
+
+      authSection.classList.add("d-none");
+      appSection.classList.remove("d-none");
+      topBar.classList.remove("d-none");
+
+      currentUserEmail.textContent = user.email || "";
+
+      // تحقق إذا كان هو الأدمن
+      getDB(adminRef).then(snap => {
+        if (snap.exists() && snap.val().uid === user.uid) {
+          createAdminPanel();
+        }
+      });
+
+    } else {
+
+      authSection.classList.remove("d-none");
+      appSection.classList.add("d-none");
+      topBar.classList.add("d-none");
+      currentUserEmail.textContent = "";
+
+    }
   });
 
-  // عناصر المنتجات والبحث
+
+  btnLogout.addEventListener("click", () => signOut(auth));
+
+  /* ───────────────────────────────
+      🟦 تحميل المنتجات من قاعدة البيانات
+  ─────────────────────────────── */
   const productForm = document.getElementById('productForm');
   const productIdInput = document.getElementById('productId');
   const productNameInput = document.getElementById('productName');
@@ -653,8 +869,10 @@
   const productCostInput = document.getElementById('productCost');
   const productQtyInput = document.getElementById('productQty');
   const productMinStockInput = document.getElementById('productMinStock');
+
   const productsBody = document.getElementById('productsBody');
   const lowStockList = document.getElementById('lowStockList');
+
   const btnResetProduct = document.getElementById('btnResetProduct');
   const searchNameInput = document.getElementById('searchName');
   const searchBarcodeInput = document.getElementById('searchBarcode');
@@ -663,140 +881,28 @@
   const todaySoldQtyLabel = document.getElementById('todaySoldQty');
   const totalProductsLabel = document.getElementById('totalProducts');
   const lowStockCountLabel = document.getElementById('lowStockCount');
+/* عناصر البيع */
+const saleForm = document.getElementById("saleForm");
+const saleBarcodeInput = document.getElementById("saleBarcode");
+const saleProductNameInput = document.getElementById("saleProductName");
+const saleCostInput = document.getElementById("saleCost");
+const saleAvailableQtyInput = document.getElementById("saleAvailableQty");
+const salePriceInput = document.getElementById("salePrice");
+const saleQtyInput = document.getElementById("saleQty");
 
-  const salesBody = document.getElementById('salesBody');
-  const stockMovesBody = document.getElementById('stockMovesBody');
-  const dailyStatsBody = document.getElementById('dailyStatsBody');
+/* عناصر حركات المخزون */
+const stockMovesBody = document.getElementById("stockMovesBody");
 
-  const rangeForm = document.getElementById('rangeForm');
-  const fromDateInput = document.getElementById('fromDate');
-  const toDateInput = document.getElementById('toDate');
-  const rangeBody = document.getElementById('rangeBody');
-  const rangeTotalProfit = document.getElementById('rangeTotalProfit');
-  const rangeTotalQty = document.getElementById('rangeTotalQty');
-  const rangeTotalSales = document.getElementById('rangeTotalSales');
+/* عناصر الإحصائيات */
+const dailyStatsBody = document.getElementById("dailyStatsBody");
+const rangeForm = document.getElementById("rangeForm");
+const fromDateInput = document.getElementById("fromDate");
+const toDateInput = document.getElementById("toDate");
+const rangeBody = document.getElementById("rangeBody");
+const rangeTotalProfit = document.getElementById("rangeTotalProfit");
+const rangeTotalQty = document.getElementById("rangeTotalQty");
+const rangeTotalSales = document.getElementById("rangeTotalSales");
 
-  const saleForm = document.getElementById('saleForm');
-  const saleBarcodeInput = document.getElementById('saleBarcode');
-  const saleProductNameInput = document.getElementById('saleProductName');
-  const saleCostInput = document.getElementById('saleCost');
-  const saleAvailableQtyInput = document.getElementById('saleAvailableQty');
-  const salePriceInput = document.getElementById('salePrice');
-  const saleQtyInput = document.getElementById('saleQty');
-
-  const stockMoveForm = document.getElementById('stockMoveForm');
-  const moveBarcodeInput = document.getElementById('moveBarcode');
-  const moveTypeSelect = document.getElementById('moveType');
-  const moveQtyInput = document.getElementById('moveQty');
-  const moveNoteInput = document.getElementById('moveNote');
-
-  // سكان باركود
-  const btnOpenScanner = document.getElementById('btnOpenScanner');
-  const btnCloseScanner = document.getElementById('btnCloseScanner');
-  const scannerWrapper = document.getElementById('scannerWrapper');
-  const btnSaleScanner = document.getElementById('btnSaleScanner');
-
-  let html5QrcodeScannerProduct = null;
-  let html5QrcodeScannerSale = null;
-
-  btnOpenScanner.addEventListener('click', function() {
-    if (html5QrcodeScannerProduct) return;
-    scannerWrapper.classList.remove('d-none');
-    html5QrcodeScannerProduct = new Html5Qrcode("reader");
-    Html5Qrcode.getCameras().then(cameras => {
-      const cameraId = cameras.length > 0 ? cameras[0].id : null;
-      if (!cameraId) return;
-      html5QrcodeScannerProduct.start(
-        cameraId,
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-          productBarcodeInput.value = decodedText;
-          stopProductScanner();
-        },
-        () => {}
-      );
-    }).catch(console.error);
-  });
-
-  function stopProductScanner() {
-    if (html5QrcodeScannerProduct) {
-      html5QrcodeScannerProduct.stop().then(() => {
-        html5QrcodeScannerProduct.clear();
-        html5QrcodeScannerProduct = null;
-        scannerWrapper.classList.add('d-none');
-      });
-    } else {
-      scannerWrapper.classList.add('d-none');
-    }
-  }
-  btnCloseScanner.addEventListener('click', stopProductScanner);
-
-  btnSaleScanner.addEventListener('click', function() {
-    if (html5QrcodeScannerSale) return;
-    scannerWrapper.classList.remove('d-none');
-    html5QrcodeScannerSale = new Html5Qrcode("reader");
-    Html5Qrcode.getCameras().then(cameras => {
-      const cameraId = cameras.length > 0 ? cameras[0].id : null;
-      if (!cameraId) return;
-      html5QrcodeScannerSale.start(
-        cameraId,
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-          saleBarcodeInput.value = decodedText;
-          stopSaleScanner();
-          loadProductByBarcode(decodedText);
-        },
-        () => {}
-      );
-    }).catch(console.error);
-  });
-
-  function stopSaleScanner() {
-    if (html5QrcodeScannerSale) {
-      html5QrcodeScannerSale.stop().then(() => {
-        html5QrcodeScannerSale.clear();
-        html5QrcodeScannerSale = null;
-        scannerWrapper.classList.add('d-none');
-      });
-    } else {
-      scannerWrapper.classList.add('d-none');
-    }
-  }
-
-  // تفريغ نموذج المنتج
-  btnResetProduct.addEventListener('click', function() {
-    productIdInput.value = '';
-    productNameInput.value = '';
-    productBarcodeInput.value = '';
-    productCostInput.value = '';
-    productQtyInput.value = '';
-    productMinStockInput.value = '1';
-  });
-
-  // حفظ / تعديل منتج
-  productForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = productIdInput.value.trim();
-    const name = productNameInput.value.trim();
-    const barcode = productBarcodeInput.value.trim() || ('MANUAL-' + Date.now());
-    const cost = parseFloat(productCostInput.value) || 0;
-    const qty = parseInt(productQtyInput.value) || 0;
-    const minStock = parseInt(productMinStockInput.value) || 0;
-
-    if (!name) { alert('الرجاء إدخال اسم المنتج'); return; }
-    if (!barcode) { alert('الرجاء إدخال أو مسح باركود المنتج'); return; }
-
-    const data = { name, barcode, cost, qty, minStock };
-    if (id) {
-      updateDB(ref(db, 'products/' + id), data);
-    } else {
-      const newRef = push(ref(db, 'products'));
-      setDB(newRef, data);
-    }
-    btnResetProduct.click();
-  });
-
-  // كاش المنتجات للبحث
   let productsCache = [];
 
   onValue(ref(db, 'products'), snapshot => {
@@ -820,10 +926,15 @@
       totalProducts++;
       if (p.qty <= 0 || p.qty <= p.minStock) lowStockCount++;
     });
+
     totalProductsLabel.textContent = totalProducts;
     lowStockCountLabel.textContent = lowStockCount;
   });
 
+
+  /* ───────────────────────────────
+      🟦 عرض جدول المنتجات + البحث
+  ─────────────────────────────── */
   function renderProductsTable() {
     productsBody.innerHTML = '';
     lowStockList.innerHTML = '';
@@ -837,14 +948,17 @@
 
       let statusBadge = '';
       let trClass = '';
+
       if (p.qty <= 0) {
         statusBadge = '<span class="badge badge-out text-white">نفد</span>';
         trClass = 'out-stock';
         addLowStockItem(p, 'نفد من المخزون');
+
       } else if (p.qty <= p.minStock) {
         statusBadge = '<span class="badge badge-low text-dark">قرب النفاد</span>';
         trClass = 'low-stock';
         addLowStockItem(p, 'قرب النفاد');
+
       } else {
         statusBadge = '<span class="badge bg-success">جيد</span>';
       }
@@ -866,6 +980,7 @@
     });
   }
 
+
   function addLowStockItem(p, text) {
     const li = document.createElement('li');
     li.className = 'list-group-item d-flex justify-content-between align-items-center';
@@ -876,223 +991,369 @@
     lowStockList.appendChild(li);
   }
 
+
   window.editProduct = function(id) {
     const found = productsCache.find(p => p.id === id);
     if (!found) return;
+
     productIdInput.value = id;
     productNameInput.value = found.name;
     productBarcodeInput.value = found.barcode;
     productCostInput.value = found.cost;
     productQtyInput.value = found.qty;
     productMinStockInput.value = found.minStock;
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   searchNameInput.addEventListener('input', renderProductsTable);
   searchBarcodeInput.addEventListener('input', renderProductsTable);
 
-  // تحميل منتج للبيـع
-  function loadProductByBarcode(barcode) {
-    const p = productsCache.find(pr => pr.barcode === barcode);
-    if (!p) { alert('لم يتم العثور على منتج بهذا الباركود'); return; }
-    saleProductNameInput.value = p.name;
-    saleCostInput.value = p.cost;
-    saleAvailableQtyInput.value = p.qty;
-  }
 
-  saleBarcodeInput.addEventListener('change', function() {
-    const barcode = saleBarcodeInput.value.trim();
-    if (barcode) loadProductByBarcode(barcode);
+  /* ───────────────────────────────
+      🟦 تفريغ نموذج المنتج
+  ─────────────────────────────── */
+  btnResetProduct.addEventListener('click', function() {
+    productIdInput.value = '';
+    productNameInput.value = '';
+    productBarcodeInput.value = '';
+    productCostInput.value = '';
+    productQtyInput.value = '';
+    productMinStockInput.value = '1';
   });
 
-  // تسجيل بيع
-  saleForm.addEventListener('submit', function(e) {
+
+  /* ───────────────────────────────
+      🟦 حفظ / تعديل منتج
+  ─────────────────────────────── */
+  productForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    const barcode = saleBarcodeInput.value.trim();
-    const name = saleProductNameInput.value.trim();
-    const cost = parseFloat(saleCostInput.value) || 0;
-    const availableQty = parseInt(saleAvailableQtyInput.value) || 0;
-    const price = parseFloat(salePriceInput.value) || 0;
-    const qty = parseInt(saleQtyInput.value) || 0;
 
-    if (!barcode || !name) { alert('اختر منتج صحيح قبل البيع'); return; }
-    if (qty <= 0) { alert('كمية غير صحيحة'); return; }
-    if (qty > availableQty) { alert('الكمية المطلوبة أكبر من المتوفر'); return; }
+    const id = productIdInput.value.trim();
+    const name = productNameInput.value.trim();
+    const barcode = productBarcodeInput.value.trim() || ('MANUAL-' + Date.now());
+    const cost = parseFloat(productCostInput.value) || 0;
+    const qty = parseInt(productQtyInput.value) || 0;
+    const minStock = parseInt(productMinStockInput.value) || 0;
 
-    const profitPerUnit = price - cost;
-    const totalProfit = profitPerUnit * qty;
-    const nowDate = getTodayKey();
-    const nowTime = getTimeString();
+    if (!name) return alert('الرجاء إدخال اسم المنتج');
 
-    const product = productsCache.find(p => p.barcode === barcode);
-    if (!product) { alert('المنتج غير موجود'); return; }
+    const data = { name, barcode, cost, qty, minStock };
 
-    const newQty = (product.qty || 0) - qty;
-    updateDB(ref(db, 'products/' + product.id), { qty: newQty });
+    if (id) {
+      updateDB(ref(db, 'products/' + id), data);
+    } else {
+      const newRef = push(ref(db, 'products'));
+      setDB(newRef, data);
+    }
 
-    const saleData = { time: nowTime, productName: name, barcode, qty, cost, price, profit: totalProfit };
-    const newSaleRef = push(ref(db, 'sales/' + nowDate));
-    setDB(newSaleRef, saleData);
+    btnResetProduct.click();
+  });
+/* ───────────────────────────────
+    🔵 تحميل منتج بمجرد إدخال الباركود في البيع
+─────────────────────────────── */
+function loadProductByBarcode(barcode) {
+  const p = productsCache.find(pr => pr.barcode === barcode);
+  if (!p) { 
+    alert('لم يتم العثور على منتج بهذا الباركود'); 
+    return; 
+  }
+  saleProductNameInput.value = p.name;
+  saleCostInput.value = p.cost;
+  saleAvailableQtyInput.value = p.qty;
+}
 
-    const dailyRef = ref(db, 'dailyStats/' + nowDate);
-    getDB(dailyRef).then(statSnap => {
-      let stats = { totalProfit: 0, totalQty: 0, totalSalesCount: 0 };
-      if (statSnap.exists()) stats = statSnap.val();
-      stats.totalProfit = (stats.totalProfit || 0) + totalProfit;
-      stats.totalQty = (stats.totalQty || 0) + qty;
-      stats.totalSalesCount = (stats.totalSalesCount || 0) + 1;
-      setDB(dailyRef, stats);
-    });
+saleBarcodeInput.addEventListener('change', function () {
+  const barcode = saleBarcodeInput.value.trim();
+  if (barcode) loadProductByBarcode(barcode);
+});
 
-    salePriceInput.value = '';
-    saleQtyInput.value = '';
-    alert('تم تسجيل عملية البيع بنجاح');
+
+/* ───────────────────────────────
+    🔵 تنفيذ عملية البيع
+─────────────────────────────── */
+saleForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const barcode = saleBarcodeInput.value.trim();
+  const name = saleProductNameInput.value.trim();
+  const cost = parseFloat(saleCostInput.value) || 0;
+  const availableQty = parseInt(saleAvailableQtyInput.value) || 0;
+  const price = parseFloat(salePriceInput.value) || 0;
+  const qty = parseInt(saleQtyInput.value) || 0;
+
+  if (!barcode || !name) return alert('اختر منتجًا صحيحًا قبل البيع');
+  if (qty <= 0) return alert('كمية غير صحيحة');
+  if (qty > availableQty) return alert('الكمية المطلوبة أكبر من المتوفر');
+
+  const profitPerUnit = price - cost;
+  const totalProfit = profitPerUnit * qty;
+
+  const today = getTodayKey();
+  const nowTime = getTimeString();
+
+  const product = productsCache.find(p => p.barcode === barcode);
+  if (!product) return alert('المنتج غير موجود');
+
+  const newQty = (product.qty || 0) - qty;
+
+  // تحديث المخزون
+  updateDB(ref(db, 'products/' + product.id), { qty: newQty });
+
+  // تسجيل عملية البيع
+  const saleData = {
+    time: nowTime,
+    productName: name,
+    barcode,
+    qty,
+    cost,
+    price,
+    profit: totalProfit
+  };
+
+  const newSaleRef = push(ref(db, 'sales/' + today));
+  setDB(newSaleRef, saleData);
+
+  // تحديث إحصائيات اليوم
+  const statsRef = ref(db, 'dailyStats/' + today);
+
+  getDB(statsRef).then(statSnap => {
+    let stats = { totalProfit: 0, totalQty: 0, totalSalesCount: 0 };
+
+    if (statSnap.exists()) stats = statSnap.val();
+
+    stats.totalProfit = (stats.totalProfit || 0) + totalProfit;
+    stats.totalQty = (stats.totalQty || 0) + qty;
+    stats.totalSalesCount = (stats.totalSalesCount || 0) + 1;
+
+    setDB(statsRef, stats);
   });
 
-  // مبيعات اليوم
-  function listenTodaySales() {
-    const today = getTodayKey();
-    onValue(ref(db, 'sales/' + today), snapshot => {
-      salesBody.innerHTML = '';
-      let totalProfit = 0;
-      let totalQty = 0;
-      if (snapshot.exists()) {
-        const sales = snapshot.val();
-        for (const key in sales) {
-          const s = sales[key];
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${s.time}</td>
-            <td>${s.productName}</td>
-            <td>${s.qty}</td>
-            <td>${s.cost}</td>
-            <td>${s.price}</td>
-            <td>${s.profit}</td>
-          `;
-          salesBody.appendChild(tr);
-          totalProfit += s.profit || 0;
-          totalQty += s.qty || 0;
-        }
+  salePriceInput.value = '';
+  saleQtyInput.value = '';
+
+  alert('تم تسجيل عملية البيع بنجاح');
+});
+
+
+/* ───────────────────────────────
+    🔵 مبيعات اليوم — عرض تلقائي مباشر
+─────────────────────────────── */
+function listenTodaySales() {
+  const today = getTodayKey();
+
+  onValue(ref(db, 'sales/' + today), snapshot => {
+    salesBody.innerHTML = '';
+
+    let totalProfit = 0;
+    let totalQty = 0;
+
+    if (snapshot.exists()) {
+      const sales = snapshot.val();
+
+      for (const key in sales) {
+        const s = sales[key];
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.time}</td>
+          <td>${s.productName}</td>
+          <td>${s.qty}</td>
+          <td>${s.cost}</td>
+          <td>${s.price}</td>
+          <td>${s.profit}</td>
+        `;
+        salesBody.appendChild(tr);
+
+        totalProfit += s.profit || 0;
+        totalQty += s.qty || 0;
       }
-      todayProfitLabel.textContent = totalProfit.toFixed(2).replace(/\.00$/, '');
-      todaySoldQtyLabel.textContent = totalQty;
+    }
+
+    todayProfitLabel.textContent = totalProfit.toFixed(2).replace(/\.00$/, '');
+    todaySoldQtyLabel.textContent = totalQty;
+  });
+}
+
+listenTodaySales();
+/* ─────────────────────────────────────
+    🔵 حركة المخزون (دخول / خروج)
+─────────────────────────────────────── */
+const stockMoveForm = document.getElementById('stockMoveForm');
+const moveBarcodeInput = document.getElementById('moveBarcode');
+const moveTypeSelect = document.getElementById('moveType');
+const moveQtyInput = document.getElementById('moveQty');
+const moveNoteInput = document.getElementById('moveNote');
+
+
+stockMoveForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const barcode = moveBarcodeInput.value.trim();
+  const type = moveTypeSelect.value;
+  const qty = parseInt(moveQtyInput.value) || 0;
+  const note = moveNoteInput.value.trim();
+
+  if (!barcode) return alert('أدخل باركود المنتج');
+  if (qty <= 0) return alert('كمية غير صحيحة');
+
+  const today = getTodayKey();
+  const nowTime = getTimeString();
+  const timestamp = Date.now();
+
+  const product = productsCache.find(p => p.barcode === barcode);
+  if (!product) return alert('لم يتم العثور على المنتج');
+
+  let newQty = product.qty || 0;
+
+  if (type === 'in') {
+    newQty += qty;
+  } else {
+    newQty -= qty;
+    if (newQty < 0) newQty = 0;
+  }
+
+  // تحديث الكمية في قاعدة البيانات
+  updateDB(ref(db, 'products/' + product.id), { qty: newQty });
+
+  // حفظ حركة المخزون
+  const moveData = {
+    barcode,
+    type,
+    qty,
+    note,
+    date: today,
+    time: nowTime,
+    timestamp
+  };
+
+  const newMoveRef = push(ref(db, 'stockMoves'));
+  setDB(newMoveRef, moveData);
+
+  moveQtyInput.value = '';
+  moveNoteInput.value = '';
+
+  alert('تم تسجيل حركة المخزون بنجاح');
+});
+
+
+/* ─────────────────────────────────────
+    🔵 عرض أحدث 50 حركة مخزون
+─────────────────────────────────────── */
+onValue(ref(db, 'stockMoves'), snapshot => {
+  stockMovesBody.innerHTML = '';
+
+  if (snapshot.exists()) {
+    const moves = snapshot.val();
+    const rows = [];
+
+    for (const key in moves) rows.push({ id: key, ...moves[key] });
+
+    // ترتيب حسب التاريخ نزولياً
+    rows.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    // عرض آخر 50 فقط
+    rows.slice(0, 50).forEach(m => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${m.date || ''} ${m.time || ''}</td>
+        <td>${m.barcode || ''}</td>
+        <td>${m.type === 'in' ? 'دخول' : 'خروج'}</td>
+        <td>${m.qty || 0}</td>
+        <td>${m.note || ''}</td>
+      `;
+      stockMovesBody.appendChild(tr);
     });
   }
-  listenTodaySales();
+});
+/* ─────────────────────────────────────
+    🔵 إحصائيات الأيام السابقة
+─────────────────────────────────────── */
+onValue(ref(db, 'dailyStats'), snapshot => {
+  dailyStatsBody.innerHTML = '';
 
-  // إحصائيات الأيام السابقة
-  onValue(ref(db, 'dailyStats'), snapshot => {
-    dailyStatsBody.innerHTML = '';
-    if (snapshot.exists()) {
-      const stats = snapshot.val();
-      const keys = Object.keys(stats).sort((a, b) => b.localeCompare(a));
-      keys.forEach(dateKey => {
-        const s = stats[dateKey];
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${dateKey}</td>
-          <td>${(s.totalProfit || 0).toFixed(2).replace(/\.00$/, '')}</td>
-          <td>${s.totalQty || 0}</td>
-          <td>${s.totalSalesCount || 0}</td>
-        `;
-        dailyStatsBody.appendChild(tr);
-      });
-    }
-  });
+  if (snapshot.exists()) {
+    const stats = snapshot.val();
 
-  // حركات المخزون
-  onValue(ref(db, 'stockMoves'), snapshot => {
-    stockMovesBody.innerHTML = '';
-    if (snapshot.exists()) {
-      const moves = snapshot.val();
-      const rows = [];
-      for (const key in moves) rows.push({ id: key, ...moves[key] });
-      rows.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-      rows.slice(0, 50).forEach(m => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${m.date || ''} ${m.time || ''}</td>
-          <td>${m.barcode || ''}</td>
-          <td>${m.type === 'in' ? 'دخول' : 'خروج'}</td>
-          <td>${m.qty || 0}</td>
-          <td>${m.note || ''}</td>
-        `;
-        stockMovesBody.appendChild(tr);
-      });
-    }
-  });
+    // ترتيب حسب التاريخ تنازليًا
+    const keys = Object.keys(stats).sort((a, b) => b.localeCompare(a));
 
-  stockMoveForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const barcode = moveBarcodeInput.value.trim();
-    const type = moveTypeSelect.value;
-    const qty = parseInt(moveQtyInput.value) || 0;
-    const note = moveNoteInput.value.trim();
+    keys.forEach(dateKey => {
+      const s = stats[dateKey];
 
-    if (!barcode) { alert('أدخل باركود المنتج'); return; }
-    if (qty <= 0) { alert('كمية غير صحيحة'); return; }
-
-    const nowDate = getTodayKey();
-    const nowTime = getTimeString();
-    const timestamp = Date.now();
-
-    const product = productsCache.find(p => p.barcode === barcode);
-    if (!product) { alert('لم يتم العثور على المنتج'); return; }
-
-    let newQty = product.qty || 0;
-    if (type === 'in') newQty += qty; else { newQty -= qty; if (newQty < 0) newQty = 0; }
-    updateDB(ref(db, 'products/' + product.id), { qty: newQty });
-
-    const moveData = { barcode, type, qty, note, date: nowDate, time: nowTime, timestamp };
-    const newMoveRef = push(ref(db, 'stockMoves'));
-    setDB(newMoveRef, moveData);
-
-    moveQtyInput.value = '';
-    moveNoteInput.value = '';
-    alert('تم تسجيل حركة المخزون بنجاح');
-  });
-
-  // تقرير فترة زمنية
-  rangeForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const from = fromDateInput.value;
-    const to = toDateInput.value;
-    if (!from || !to) { alert('اختر تاريخ البداية والنهاية'); return; }
-    if (from > to) { alert('تاريخ البداية أكبر من النهاية'); return; }
-
-    getDB(ref(db, 'dailyStats')).then(snapshot => {
-      rangeBody.innerHTML = '';
-      rangeTotalProfit.textContent = '0';
-      rangeTotalQty.textContent = '0';
-      rangeTotalSales.textContent = '0';
-
-      if (!snapshot.exists()) return;
-      const stats = snapshot.val();
-      const keys = Object.keys(stats).filter(d => d >= from && d <= to).sort();
-      let sumProfit = 0, sumQty = 0, sumSales = 0;
-
-      keys.forEach(dateKey => {
-        const s = stats[dateKey];
-        const tp = s.totalProfit || 0;
-        const tq = s.totalQty || 0;
-        const ts = s.totalSalesCount || 0;
-        sumProfit += tp; sumQty += tq; sumSales += ts;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${dateKey}</td>
-          <td>${tp.toFixed(2).replace(/\.00$/, '')}</td>
-          <td>${tq}</td>
-          <td>${ts}</td>
-        `;
-        rangeBody.appendChild(tr);
-      });
-
-      rangeTotalProfit.textContent = sumProfit.toFixed(2).replace(/\.00$/, '');
-      rangeTotalQty.textContent = sumQty;
-      rangeTotalSales.textContent = sumSales;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${dateKey}</td>
+        <td>${(s.totalProfit || 0).toFixed(2).replace(/\.00$/, '')}</td>
+        <td>${s.totalQty || 0}</td>
+        <td>${s.totalSalesCount || 0}</td>
+      `;
+      dailyStatsBody.appendChild(tr);
     });
+  }
+});
+
+
+/* ─────────────────────────────────────
+    🔵 تقرير فترة زمنية
+─────────────────────────────────────── */
+rangeForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const from = fromDateInput.value;
+  const to = toDateInput.value;
+
+  if (!from || !to) return alert('اختر تاريخ البداية والنهاية');
+  if (from > to) return alert('تاريخ البداية أكبر من تاريخ النهاية');
+
+  getDB(ref(db, 'dailyStats')).then(snapshot => {
+    rangeBody.innerHTML = '';
+    rangeTotalProfit.textContent = '0';
+    rangeTotalQty.textContent = '0';
+    rangeTotalSales.textContent = '0';
+
+    if (!snapshot.exists()) return;
+
+    const stats = snapshot.val();
+    const keys = Object.keys(stats)
+      .filter(d => d >= from && d <= to)
+      .sort();
+
+    let sumProfit = 0;
+    let sumQty = 0;
+    let sumSales = 0;
+
+    keys.forEach(dateKey => {
+      const s = stats[dateKey];
+
+      const dailyProfit = s.totalProfit || 0;
+      const dailyQty = s.totalQty || 0;
+      const dailySales = s.totalSalesCount || 0;
+
+      sumProfit += dailyProfit;
+      sumQty += dailyQty;
+      sumSales += dailySales;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${dateKey}</td>
+        <td>${dailyProfit.toFixed(2).replace(/\.00$/, '')}</td>
+        <td>${dailyQty}</td>
+        <td>${dailySales}</td>
+      `;
+      rangeBody.appendChild(tr);
+    });
+
+    rangeTotalProfit.textContent = sumProfit.toFixed(2).replace(/\.00$/, '');
+    rangeTotalQty.textContent = sumQty;
+    rangeTotalSales.textContent = sumSales;
   });
+});
+
+
+/* ─────────────────────────────────────
+    🔵 نهاية السكربت بالكامل
+─────────────────────────────────────── */
 
 </script>
 
