@@ -163,10 +163,10 @@
     </style>
 </head>
 <body>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"></script>
-    
+    <!-- Firebase SDK (v8 متوافق مع الكود) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <!-- Header -->
     <div class="header">
         <div class="container">
@@ -514,7 +514,7 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="alert alert-info text-center">
-                    <small>تم التطوير بواسطة برنامج الحسن للهواتف المحمولة | رقم السري للعمليات الحساسة: 521988</small>
+                    <small>تم التطوير بواسطة برنامج الحسن للهواتف المحمولة | الرقم السري للعمليات الحساسة: 521988</small>
                 </div>
             </div>
         </div>
@@ -537,19 +537,9 @@
             measurementId: "G-PP1BG203MT"
         };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        // Initialize Firebase (v8)
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
-        // Firebase Functions
-        const ref = firebase.database.ref;
-        const push = firebase.database.push;
-        const setDB = firebase.database.set;
-        const updateDB = firebase.database.update;
-        const onValue = firebase.database.onValue;
-        const getDB = firebase.database.get;
-        const child = firebase.database.child;
-        const removeDB = firebase.database.remove;
 
         // Global Variables
         let productsCache = [];
@@ -636,7 +626,7 @@
         const lowStockCountLabel = document.getElementById('lowStockCount');
 
         // Load Products
-        onValue(ref(db, 'products'), snapshot => {
+        firebase.database().ref('products').on('value', snapshot => {
             productsCache = [];
             productsBody.innerHTML = '';
             lowStockBody.innerHTML = '';
@@ -735,7 +725,6 @@
             productQtyInput.value = found.qty;
             productMinStockInput.value = found.minStock;
             
-            // Scroll to product form
             document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
         };
 
@@ -765,10 +754,10 @@
             const data = { name, barcode, cost, qty, minStock };
             
             if (id) {
-                updateDB(ref(db, 'products/' + id), data);
+                firebase.database().ref('products/' + id).update(data);
             } else {
-                const newRef = push(ref(db, 'products'));
-                setDB(newRef, data);
+                const newRef = firebase.database().ref('products').push();
+                newRef.set(data);
             }
             
             btnResetProduct.click();
@@ -850,7 +839,7 @@
             
             // Update product quantity
             const newQty = (product.qty || 0) - qty;
-            updateDB(ref(db, 'products/' + product.id), { qty: newQty });
+            firebase.database().ref('products/' + product.id).update({ qty: newQty });
             
             // Save sale record
             const saleData = {
@@ -863,19 +852,19 @@
                 profit: totalProfit
             };
             
-            const newSaleRef = push(ref(db, 'sales/' + today));
-            setDB(newSaleRef, saleData);
+            const newSaleRef = firebase.database().ref('sales/' + today).push();
+            newSaleRef.set(saleData);
             
             // Update daily statistics
-            const statsRef = ref(db, 'dailyStats/' + today);
-            getDB(statsRef).then(statSnap => {
+            const statsRef = firebase.database().ref('dailyStats/' + today);
+            statsRef.once('value').then(statSnap => {
                 let stats = { totalProfit: 0, totalQty: 0, totalSalesCount: 0 };
                 if (statSnap.exists()) stats = statSnap.val();
                 
                 stats.totalProfit = (stats.totalProfit || 0) + totalProfit;
                 stats.totalQty = (stats.totalQty || 0) + qty;
                 stats.totalSalesCount = (stats.totalSalesCount || 0) + 1;
-                setDB(statsRef, stats);
+                statsRef.set(stats);
             });
             
             salePriceInput.value = '';
@@ -888,7 +877,7 @@
         function loadTodaySales() {
             const today = getTodayKey();
             
-            onValue(ref(db, 'sales/' + today), snapshot => {
+            firebase.database().ref('sales/' + today).on('value', snapshot => {
                 salesBody.innerHTML = '';
                 todaySalesCache = {};
                 
@@ -963,7 +952,7 @@
                 if (newQty < 0) newQty = 0;
             }
             
-            updateDB(ref(db, 'products/' + product.id), { qty: newQty });
+            firebase.database().ref('products/' + product.id).update({ qty: newQty });
             
             const today = getTodayKey();
             const nowTime = getTimeString();
@@ -979,8 +968,8 @@
                 timestamp
             };
             
-            const newMoveRef = push(ref(db, 'stockMoves'));
-            setDB(newMoveRef, moveData);
+            const newMoveRef = firebase.database().ref('stockMoves').push();
+            newMoveRef.set(moveData);
             
             moveBarcodeInput.value = '';
             moveQtyInput.value = '';
@@ -990,7 +979,7 @@
         });
 
         // Load Stock Moves
-        onValue(ref(db, 'stockMoves'), snapshot => {
+        firebase.database().ref('stockMoves').on('value', snapshot => {
             stockMovesBody.innerHTML = '';
             
             if (snapshot.exists()) {
@@ -1018,50 +1007,59 @@
             }
         });
 
-        // Barcode Scanner - Simple Version (for GitHub Pages)
-       async function openScanner(mode) {
-    currentScannerMode = mode;
-
-    scannerPlaceholder.classList.add('d-none');
-    scannerWrapper.classList.remove('d-none');
-
-    const codeReader = new ZXing.BrowserMultiFormatReader();
-
-    try {
-        const videoInputDevices = await codeReader.listVideoInputDevices();
-
-        if (!videoInputDevices.length) {
-            alert("لا توجد كاميرا متاحة");
-            return;
+        // Barcode logic: handle scanned value
+        function handleBarcodeDetected(code) {
+            if (currentScannerMode === 'product') {
+                productBarcodeInput.value = code;
+            } else if (currentScannerMode === 'sale') {
+                saleBarcodeInput.value = code;
+                loadProductByBarcode(code);
+            }
+            closeScanner();
         }
 
-        // تشغيل الكاميرا الخلفية
-        const selectedDeviceId = videoInputDevices[videoInputDevices.length - 1].deviceId;
+        // Barcode Scanner - Simple Version (for GitHub Pages)
+        async function openScanner(mode) {
+            currentScannerMode = mode;
 
-        codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, err) => {
-            if (result) {
-                handleBarcodeDetected(result.text);
-                codeReader.reset();
+            scannerPlaceholder.classList.add('d-none');
+            scannerWrapper.classList.remove('d-none');
+
+            const codeReader = new ZXing.BrowserMultiFormatReader();
+
+            try {
+                const videoInputDevices = await codeReader.listVideoInputDevices();
+
+                if (!videoInputDevices.length) {
+                    alert("لا توجد كاميرا متاحة");
+                    return;
+                }
+
+                const selectedDeviceId = videoInputDevices[videoInputDevices.length - 1].deviceId;
+
+                codeReader.decodeFromVideoDevice(selectedDeviceId, videoElement, (result, err) => {
+                    if (result) {
+                        handleBarcodeDetected(result.text);
+                        codeReader.reset();
+                    }
+                });
+            } catch (error) {
+                alert("حدث خطأ في تشغيل الماسح: " + error);
             }
-        });
-    } catch (error) {
-        alert("حدث خطأ في تشغيل الماسح: " + error);
-    }
-}
+        }
 
-function closeScanner() {
-    scannerWrapper.classList.add('d-none');
-    scannerPlaceholder.classList.remove('d-none');
-    videoElement.srcObject = null;
-    ZXing.BrowserMultiFormatReader.reset;
-}
+        function closeScanner() {
+            scannerWrapper.classList.add('d-none');
+            scannerPlaceholder.classList.remove('d-none');
+            videoElement.srcObject = null;
+        }
 
         // Scanner Event Listeners
         btnOpenScanner.addEventListener('click', () => openScanner('product'));
         btnSaleScanner.addEventListener('click', () => openScanner('sale'));
         btnCloseScanner.addEventListener('click', closeScanner);
 
-        // Reset All Data
+        // Reset All Data (sales, stats, stockMoves only)
         document.getElementById('btnResetAll').addEventListener('click', function() {
             const pass = prompt('أدخل الرقم السري لتصفير بيانات المبيعات والأرباح:');
             if (pass === null) return;
@@ -1076,9 +1074,9 @@ function closeScanner() {
             }
             
             Promise.all([
-                removeDB(ref(db, 'sales')),
-                removeDB(ref(db, 'dailyStats')),
-                removeDB(ref(db, 'stockMoves'))
+                firebase.database().ref('sales').remove(),
+                firebase.database().ref('dailyStats').remove(),
+                firebase.database().ref('stockMoves').remove()
             ]).then(() => {
                 alert('✅ تم تصفير بيانات المبيعات والأرباح وحركات المخزون بنجاح');
                 location.reload();
@@ -1089,13 +1087,9 @@ function closeScanner() {
 
         // Initialize
         window.addEventListener('load', function() {
-            // Set current date in any date fields
             const today = new Date().toISOString().split('T')[0];
-            
-            // Initialize scanner placeholder
             scannerPlaceholder.classList.remove('d-none');
             scannerWrapper.classList.add('d-none');
-            
             console.log('برنامج الحسن للهواتف المحمولة جاهز للاستخدام');
         });
 
@@ -1105,7 +1099,6 @@ function closeScanner() {
                 scannerStream.getTracks().forEach(track => track.stop());
             }
         });
-
     </script>
 </body>
 </html>
