@@ -735,6 +735,7 @@
                     <span class="floating-panel-title">إدارة المبيعات</span>
                     <button class="floating-panel-close" data-close-panel>&times;</button>
                 </div>
+                <div class="floating-panel-body">
                     <div class="row">
                         <!-- فورم بيع منتج -->
                         <div class="col-lg-4">
@@ -919,34 +920,101 @@
                 </div>
             </div>
         </div>
-           <div class="floating-panel-body">
+
+        <!-- نافذة عائمة للتقارير -->
+        <div class="floating-panel-backdrop" id="panel-stats">
+            <div class="floating-panel">
+                <div class="floating-panel-header">
+                    <span class="floating-panel-title">التقارير والإحصائيات</span>
+                    <button class="floating-panel-close" data-close-panel>&times;</button>
+                </div>
+                <div class="floating-panel-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5>📈 تقارير متقدمة</h5>
+                                    <h5>📈 إنشاء تقرير متقدم</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mb-3">
-                                        <label for="reportStartDate" class="form-label">من تاريخ</label>
-                                        <input type="date" class="form-control" id="reportStartDate">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="reportStartDate" class="form-label">من تاريخ</label>
+                                            <input type="date" class="form-control" id="reportStartDate" 
+                                                   value="${new Date().toISOString().split('T')[0]}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="reportEndDate" class="form-label">إلى تاريخ</label>
+                                            <input type="date" class="form-control" id="reportEndDate" 
+                                                   value="${new Date().toISOString().split('T')[0]}">
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="reportEndDate" class="form-label">إلى تاريخ</label>
-                                        <input type="date" class="form-control" id="reportEndDate">
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-primary" onclick="generateReport()">
+                                                    🔍 إنشاء تقرير متقدم
+                                                </button>
+                                                <button class="btn btn-secondary" onclick="loadSavedReports()">
+                                                    📚 التقارير المحفوظة
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <button class="btn btn-primary w-100" onclick="generateReport()">🔍 إنشاء تقرير</button>
+                                    
+                                    <div id="quickStats">
+                                        <div class="alert alert-light">
+                                            <h6>تعليمات:</h6>
+                                            <ol class="mb-0">
+                                                <li>اختر تاريخ البدء وتاريخ الانتهاء</li>
+                                                <li>اضغط على "إنشاء تقرير متقدم"</li>
+                                                <li>سيعرض النظام تقريراً شاملاً يشمل:
+                                                    <ul>
+                                                        <li>المبيعات والأرباح</li>
+                                                        <li>المصاريف وصافي الربح</li>
+                                                        <li>المنتجات الأكثر مبيعاً</li>
+                                                        <li>أداء المستخدمين</li>
+                                                        <li>توزيع المصاريف</li>
+                                                    </ul>
+                                                </li>
+                                                <li>يمكنك تصدير التقرير أو طباعته أو حفظه</li>
+                                            </ol>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                    </div>
+                    
+                    <!-- التقارير المحفوظة -->
+                    <div class="row mt-3">
+                        <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5>📊 إحصائيات سريعة</h5>
+                                    <h5>📚 التقارير المحفوظة</h5>
                                 </div>
                                 <div class="card-body">
-                                    <div id="quickStats">
-                                        <p>قم بإنشاء تقرير لعرض الإحصائيات</p>
+                                    <div id="savedReportsList" class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>الفترة</th>
+                                                    <th>المبيعات</th>
+                                                    <th>الأرباح</th>
+                                                    <th>المصاريف</th>
+                                                    <th>صافي الربح</th>
+                                                    <th>تاريخ الإنشاء</th>
+                                                    <th>إدارة</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="savedReportsBody">
+                                                <tr>
+                                                    <td colspan="7" class="text-center text-muted">
+                                                        جاري تحميل التقارير المحفوظة...
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -1180,11 +1248,11 @@
         const users = {
             "معتز": {
                 password: "666666",
-                permissions: ['sales', 'stock_view', 'expenses_view'] // صلاحيات محددة
+                permissions: ['sales', 'stock_view', 'expenses_view']
             },
             "مصطفي": {
                 password: "521988",
-                permissions: ['admin', 'sales', 'stock_full', 'expenses_full', 'delete', 'reset', 'reports'] // كامل الصلاحيات
+                permissions: ['admin', 'sales', 'stock_full', 'expenses_full', 'delete', 'reset', 'reports']
             }
         };
 
@@ -1195,13 +1263,10 @@
 
         // ==================== نظام تسجيل الدخول ====================
 
-        // تهيئة نظام تسجيل الدخول
         function initLoginSystem() {
-            // التحقق من التخزين المحلي
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
                 const userData = JSON.parse(savedUser);
-                // التحقق من صلاحية الجلسة (24 ساعة)
                 const sessionTime = localStorage.getItem('sessionTime');
                 if (sessionTime && (Date.now() - parseInt(sessionTime)) < 24 * 60 * 60 * 1000) {
                     loginSuccess(userData);
@@ -1219,7 +1284,6 @@
             document.getElementById('loginPage').style.display = 'flex';
             document.getElementById('mainApp').style.display = 'none';
             
-            // إضافة الأحداث لاختيار المستخدم
             document.querySelectorAll('.user-option').forEach(option => {
                 option.addEventListener('click', function() {
                     document.querySelectorAll('.user-option').forEach(opt => opt.classList.remove('active'));
@@ -1229,14 +1293,12 @@
                 });
             });
             
-            // تفعيل زر مسح الحقول
             document.getElementById('btnClearLogin').addEventListener('click', function() {
                 document.querySelectorAll('.user-option').forEach(opt => opt.classList.remove('active'));
                 document.getElementById('loginUsername').value = '';
                 document.getElementById('loginPassword').value = '';
             });
             
-            // تفعيل فورم تسجيل الدخول
             document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const username = document.getElementById('loginUsername').value.trim();
@@ -1253,7 +1315,6 @@
                         permissions: users[username].permissions
                     };
                     
-                    // حفظ بيانات الجلسة
                     localStorage.setItem('currentUser', JSON.stringify(userData));
                     localStorage.setItem('sessionTime', Date.now().toString());
                     
@@ -1269,24 +1330,17 @@
         function loginSuccess(userData) {
             currentUser = userData;
             
-            // إظهار رسالة ترحيب
             alert(`✅ مرحباً ${userData.name}! تم تسجيل الدخول بنجاح`);
             
-            // إخفاء صفحة الدخول وإظهار التطبيق
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             
-            // تحديث معلومات المستخدم في الهيدر
             document.getElementById('loggedUserInfo').textContent = `👤 ${userData.name}`;
             
-            // تحميل بيانات التطبيق
             loadAppData();
-            
-            // تحديث الإحصائيات المتقدمة
             loadAdvancedStats();
         }
 
-        // زر تسجيل الخروج
         document.getElementById('btnLogout').addEventListener('click', function() {
             if (confirm('هل تريد تسجيل الخروج؟')) {
                 localStorage.removeItem('currentUser');
@@ -1568,10 +1622,8 @@
             document.getElementById('saleForm').reset();
             document.getElementById('saleQty').value = 1;
             
-            // تشغيل صوت البيع
             playSaleSound();
             
-            // عرض الفاتورة
             setTimeout(() => {
                 showInvoice({
                     name: product.name,
@@ -1809,7 +1861,6 @@
                 total: qty * price
             });
 
-            // تحديث المخزون إذا كان المنتج موجوداً
             const product = productsCache.find(p => p.barcode === barcode);
             if (product) {
                 db.ref('products/' + product.id).update({
@@ -1939,7 +1990,6 @@
             const now = new Date();
             invoiceDate.textContent = now.toLocaleString('ar-EG');
             
-            // توليد رقم فاتورة
             const invoiceNum = 'INV-' + now.getFullYear() + '-' + 
                               String(now.getMonth() + 1).padStart(2, '0') + '-' +
                               String(Math.floor(Math.random() * 1000)).padStart(3, '0');
@@ -1977,909 +2027,775 @@
             window.print();
             document.body.innerHTML = originalContent;
             
-            // إعادة تحميل الصفحة للحفاظ على حالة التطبيق
             setTimeout(() => {
                 location.reload();
             }, 100);
-        };    
-window.generateReport = async function() {
-    if (!currentUser || !currentUser.permissions.includes('reports')) {
-        alert('❌ ليس لديك صلاحية لإنشاء التقارير');
-        return;
-    }
-    
-    const startDate = document.getElementById('reportStartDate').value;
-    const endDate = document.getElementById('reportEndDate').value;
-    
-    if (!startDate || !endDate) {
-        alert('الرجاء تحديد تاريخ البدء والانتهاء');
-        return;
-    }
-    
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999); // لنهاية اليوم
-    
-    if (start > end) {
-        alert('تاريخ البدء يجب أن يكون قبل تاريخ الانتهاء');
-        return;
-    }
-    
-    // عرض حالة التحميل
-    const quickStats = document.getElementById('quickStats');
-    quickStats.innerHTML = `
-        <div class="alert alert-info">
-            <h6>جاري إنشاء التقرير...</h6>
-            <div class="progress mt-2">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
-            </div>
-            <p class="mt-2">جاري جمع البيانات من ${startDate} إلى ${endDate}</p>
-        </div>
-    `;
-    
-    try {
-        // جلب بيانات المبيعات
-        const salesSnapshot = await db.ref('sales').once('value');
-        let totalSales = 0;
-        let totalProfit = 0;
-        let totalItems = 0;
-        let salesByDate = {};
-        let topProducts = {};
-        let salesByUser = {};
-        
-        if (salesSnapshot.exists()) {
-            const allSales = salesSnapshot.val();
+        };
+
+        // ==================== التقارير المتقدمة ====================
+
+        window.generateReport = async function() {
+            if (!currentUser || !currentUser.permissions.includes('reports')) {
+                alert('❌ ليس لديك صلاحية لإنشاء التقارير');
+                return;
+            }
             
-            // تحويل التواريخ إلى Date objects للمقارنة
-            const startTime = start.getTime();
-            const endTime = end.getTime();
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
             
-            for (const dateKey in allSales) {
-                const saleDate = new Date(dateKey);
-                const saleTime = saleDate.getTime();
+            if (!startDate || !endDate) {
+                alert('الرجاء تحديد تاريخ البدء والانتهاء');
+                return;
+            }
+            
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            
+            if (start > end) {
+                alert('تاريخ البدء يجب أن يكون قبل تاريخ الانتهاء');
+                return;
+            }
+            
+            const quickStats = document.getElementById('quickStats');
+            quickStats.innerHTML = `
+                <div class="alert alert-info">
+                    <h6>جاري إنشاء التقرير...</h6>
+                    <div class="progress mt-2">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+                    </div>
+                    <p class="mt-2">جاري جمع البيانات من ${startDate} إلى ${endDate}</p>
+                </div>
+            `;
+            
+            try {
+                const salesSnapshot = await db.ref('sales').once('value');
+                let totalSales = 0;
+                let totalProfit = 0;
+                let totalItems = 0;
+                let salesByDate = {};
+                let topProducts = {};
+                let salesByUser = {};
                 
-                // التحقق إذا كان التاريخ ضمن النطاق
-                if (saleTime >= startTime && saleTime <= endTime) {
-                    const daySales = allSales[dateKey];
-                    salesByDate[dateKey] = 0;
+                if (salesSnapshot.exists()) {
+                    const allSales = salesSnapshot.val();
+                    const startTime = start.getTime();
+                    const endTime = end.getTime();
                     
-                    for (const saleId in daySales) {
-                        const sale = daySales[saleId];
-                        totalSales += sale.totalSale || 0;
-                        totalProfit += sale.profit || 0;
-                        totalItems += sale.qty || 0;
+                    for (const dateKey in allSales) {
+                        const saleDate = new Date(dateKey);
+                        const saleTime = saleDate.getTime();
                         
-                        // جمع المبيعات لكل تاريخ
-                        salesByDate[dateKey] += sale.totalSale || 0;
-                        
-                        // جمع المبيعات حسب المنتج
-                        if (!topProducts[sale.name]) {
-                            topProducts[sale.name] = {
-                                quantity: 0,
-                                revenue: 0,
-                                profit: 0
-                            };
-                        }
-                        topProducts[sale.name].quantity += sale.qty || 0;
-                        topProducts[sale.name].revenue += sale.totalSale || 0;
-                        topProducts[sale.name].profit += sale.profit || 0;
-                        
-                        // جمع المبيعات حسب المستخدم
-                        if (sale.seller) {
-                            if (!salesByUser[sale.seller]) {
-                                salesByUser[sale.seller] = {
-                                    salesCount: 0,
-                                    revenue: 0,
-                                    profit: 0
-                                };
+                        if (saleTime >= startTime && saleTime <= endTime) {
+                            const daySales = allSales[dateKey];
+                            salesByDate[dateKey] = 0;
+                            
+                            for (const saleId in daySales) {
+                                const sale = daySales[saleId];
+                                totalSales += sale.totalSale || 0;
+                                totalProfit += sale.profit || 0;
+                                totalItems += sale.qty || 0;
+                                
+                                salesByDate[dateKey] += sale.totalSale || 0;
+                                
+                                if (!topProducts[sale.name]) {
+                                    topProducts[sale.name] = {
+                                        quantity: 0,
+                                        revenue: 0,
+                                        profit: 0
+                                    };
+                                }
+                                topProducts[sale.name].quantity += sale.qty || 0;
+                                topProducts[sale.name].revenue += sale.totalSale || 0;
+                                topProducts[sale.name].profit += sale.profit || 0;
+                                
+                                if (sale.seller) {
+                                    if (!salesByUser[sale.seller]) {
+                                        salesByUser[sale.seller] = {
+                                            salesCount: 0,
+                                            revenue: 0,
+                                            profit: 0
+                                        };
+                                    }
+                                    salesByUser[sale.seller].salesCount++;
+                                    salesByUser[sale.seller].revenue += sale.totalSale || 0;
+                                    salesByUser[sale.seller].profit += sale.profit || 0;
+                                }
                             }
-                            salesByUser[sale.seller].salesCount++;
-                            salesByUser[sale.seller].revenue += sale.totalSale || 0;
-                            salesByUser[sale.seller].profit += sale.profit || 0;
                         }
                     }
                 }
-            }
-        }
-        
-        // جلب بيانات المصاريف
-        const expensesSnapshot = await db.ref('expenses').once('value');
-        let totalExpenses = 0;
-        let expensesByType = {};
-        let expensesByDate = {};
-        
-        if (expensesSnapshot.exists()) {
-            const allExpenses = expensesSnapshot.val();
-            const startTime = start.getTime();
-            const endTime = end.getTime();
-            
-            for (const dateKey in allExpenses) {
-                const expenseDate = new Date(dateKey);
-                const expenseTime = expenseDate.getTime();
                 
-                // التحقق إذا كان التاريخ ضمن النطاق
-                if (expenseTime >= startTime && expenseTime <= endTime) {
-                    const dayExpenses = allExpenses[dateKey];
-                    expensesByDate[dateKey] = 0;
+                const expensesSnapshot = await db.ref('expenses').once('value');
+                let totalExpenses = 0;
+                let expensesByType = {};
+                let expensesByDate = {};
+                
+                if (expensesSnapshot.exists()) {
+                    const allExpenses = expensesSnapshot.val();
+                    const startTime = start.getTime();
+                    const endTime = end.getTime();
                     
-                    for (const expenseId in dayExpenses) {
-                        const expense = dayExpenses[expenseId];
-                        totalExpenses += expense.amount || 0;
-                        expensesByDate[dateKey] += expense.amount || 0;
+                    for (const dateKey in allExpenses) {
+                        const expenseDate = new Date(dateKey);
+                        const expenseTime = expenseDate.getTime();
                         
-                        // جمع المصاريف حسب النوع
-                        if (!expensesByType[expense.type]) {
-                            expensesByType[expense.type] = 0;
+                        if (expenseTime >= startTime && expenseTime <= endTime) {
+                            const dayExpenses = allExpenses[dateKey];
+                            expensesByDate[dateKey] = 0;
+                            
+                            for (const expenseId in dayExpenses) {
+                                const expense = dayExpenses[expenseId];
+                                totalExpenses += expense.amount || 0;
+                                expensesByDate[dateKey] += expense.amount || 0;
+                                
+                                if (!expensesByType[expense.type]) {
+                                    expensesByType[expense.type] = 0;
+                                }
+                                expensesByType[expense.type] += expense.amount || 0;
+                            }
                         }
-                        expensesByType[expense.type] += expense.amount || 0;
                     }
                 }
-            }
-        }
-        
-        // جلب بيانات المشتريات
-        const purchasesSnapshot = await db.ref('purchases').once('value');
-        let totalPurchases = 0;
-        let purchasesCount = 0;
-        
-        if (purchasesSnapshot.exists()) {
-            const allPurchases = purchasesSnapshot.val();
-            const startTime = start.getTime();
-            const endTime = end.getTime();
-            
-            for (const purchaseId in allPurchases) {
-                const purchase = allPurchases[purchaseId];
-                const purchaseDate = new Date(purchase.date);
-                const purchaseTime = purchaseDate.getTime();
                 
-                if (purchaseTime >= startTime && purchaseTime <= endTime) {
-                    totalPurchases += purchase.total || 0;
-                    purchasesCount++;
+                const purchasesSnapshot = await db.ref('purchases').once('value');
+                let totalPurchases = 0;
+                let purchasesCount = 0;
+                
+                if (purchasesSnapshot.exists()) {
+                    const allPurchases = purchasesSnapshot.val();
+                    const startTime = start.getTime();
+                    const endTime = end.getTime();
+                    
+                    for (const purchaseId in allPurchases) {
+                        const purchase = allPurchases[purchaseId];
+                        const purchaseDate = new Date(purchase.date);
+                        const purchaseTime = purchaseDate.getTime();
+                        
+                        if (purchaseTime >= startTime && purchaseTime <= endTime) {
+                            totalPurchases += purchase.total || 0;
+                            purchasesCount++;
+                        }
+                    }
                 }
+                
+                const netProfit = totalProfit - totalExpenses;
+                const salesDates = Object.keys(salesByDate).sort();
+                const salesAmounts = salesDates.map(date => salesByDate[date]);
+                
+                const expenseDates = Object.keys(expensesByDate).sort();
+                const expenseAmounts = expenseDates.map(date => expensesByDate[date]);
+                
+                const sortedProducts = Object.entries(topProducts)
+                    .sort((a, b) => b[1].quantity - a[1].quantity)
+                    .slice(0, 10);
+                
+                const sortedUsers = Object.entries(salesByUser)
+                    .sort((a, b) => b[1].revenue - a[1].revenue);
+                
+                const sortedExpenseTypes = Object.entries(expensesByType)
+                    .sort((a, b) => b[1] - a[1]);
+                
+                let resultsHTML = `
+                    <div class="report-results">
+                        <div class="alert alert-success">
+                            <h5>📊 تقرير الفترة: ${startDate} إلى ${endDate}</h5>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white bg-primary">
+                                    <div class="card-body text-center">
+                                        <h3>${totalSales.toFixed(2)}</h3>
+                                        <p>إجمالي المبيعات</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white bg-success">
+                                    <div class="card-body text-center">
+                                        <h3>${totalProfit.toFixed(2)}</h3>
+                                        <p>إجمالي الأرباح</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white bg-warning">
+                                    <div class="card-body text-center">
+                                        <h3>${totalExpenses.toFixed(2)}</h3>
+                                        <p>إجمالي المصاريف</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white ${netProfit >= 0 ? 'bg-info' : 'bg-danger'}">
+                                    <div class="card-body text-center">
+                                        <h3>${netProfit.toFixed(2)}</h3>
+                                        <p>صافي الربح</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6>📦 إحصائيات عامة</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <td>عدد العناصر المباعة:</td>
+                                                <td><strong>${totalItems}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>متوسط سعر البيع:</td>
+                                                <td><strong>${totalItems > 0 ? (totalSales / totalItems).toFixed(2) : 0}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>متوسط ربح العنصر:</td>
+                                                <td><strong>${totalItems > 0 ? (totalProfit / totalItems).toFixed(2) : 0}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>إجمالي المشتريات:</td>
+                                                <td><strong>${totalPurchases.toFixed(2)}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>عدد عمليات الشراء:</td>
+                                                <td><strong>${purchasesCount}</strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6>📅 توزيع المبيعات حسب التاريخ</h6>
+                                    </div>
+                                    <div class="card-body">
+                `;
+                
+                if (salesDates.length > 0) {
+                    resultsHTML += `
+                        <div class="table-responsive" style="max-height: 200px;">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>المبيعات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    salesDates.forEach(date => {
+                        resultsHTML += `
+                            <tr>
+                                <td>${date}</td>
+                                <td>${salesByDate[date].toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    resultsHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    resultsHTML += `<p class="text-muted">لا توجد بيانات مبيعات في هذه الفترة</p>`;
+                }
+                
+                resultsHTML += `
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6>🏆 المنتجات الأكثر مبيعاً</h6>
+                                    </div>
+                                    <div class="card-body">
+                `;
+                
+                if (sortedProducts.length > 0) {
+                    resultsHTML += `
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم المنتج</th>
+                                        <th>الكمية</th>
+                                        <th>إجمالي المبيعات</th>
+                                        <th>إجمالي الربح</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    sortedProducts.forEach(([productName, data], index) => {
+                        resultsHTML += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${productName}</td>
+                                <td>${data.quantity}</td>
+                                <td>${data.revenue.toFixed(2)}</td>
+                                <td>${data.profit.toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    resultsHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    resultsHTML += `<p class="text-muted">لا توجد بيانات عن المنتجات</p>`;
+                }
+                
+                resultsHTML += `
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6>👥 أداء المستخدمين</h6>
+                                    </div>
+                                    <div class="card-body">
+                `;
+                
+                if (sortedUsers.length > 0) {
+                    resultsHTML += `
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>المستخدم</th>
+                                        <th>عدد المبيعات</th>
+                                        <th>إجمالي المبيعات</th>
+                                        <th>إجمالي الربح</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    sortedUsers.forEach(([userName, data]) => {
+                        resultsHTML += `
+                            <tr>
+                                <td>${userName}</td>
+                                <td>${data.salesCount}</td>
+                                <td>${data.revenue.toFixed(2)}</td>
+                                <td>${data.profit.toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    resultsHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    resultsHTML += `<p class="text-muted">لا توجد بيانات عن المستخدمين</p>`;
+                }
+                
+                resultsHTML += `
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6>💸 توزيع المصاريف حسب النوع</h6>
+                                    </div>
+                                    <div class="card-body">
+                `;
+                
+                if (sortedExpenseTypes.length > 0) {
+                    resultsHTML += `
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>نوع المصروف</th>
+                                        <th>المبلغ</th>
+                                        <th>النسبة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    sortedExpenseTypes.forEach(([type, amount]) => {
+                        const percentage = totalExpenses > 0 ? ((amount / totalExpenses) * 100).toFixed(1) : 0;
+                        resultsHTML += `
+                            <tr>
+                                <td>${type}</td>
+                                <td>${amount.toFixed(2)}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-warning" style="width: ${percentage}%">${percentage}%</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    resultsHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    resultsHTML += `<p class="text-muted">لا توجد مصاريف في هذه الفترة</p>`;
+                }
+                
+                resultsHTML += `
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <button class="btn btn-success me-2" onclick="exportReportToExcel()">📄 تصدير التقرير إلى Excel</button>
+                                        <button class="btn btn-primary me-2" onclick="printReport()">🖨 طباعة التقرير</button>
+                                        <button class="btn btn-secondary" onclick="saveReport()">💾 حفظ التقرير</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                quickStats.innerHTML = resultsHTML;
+                
+                window.currentReport = {
+                    startDate,
+                    endDate,
+                    totalSales,
+                    totalProfit,
+                    totalExpenses,
+                    netProfit,
+                    totalItems,
+                    totalPurchases,
+                    purchasesCount,
+                    salesByDate,
+                    topProducts: sortedProducts,
+                    salesByUser: sortedUsers,
+                    expensesByType: sortedExpenseTypes
+                };
+                
+            } catch (error) {
+                console.error('خطأ في إنشاء التقرير:', error);
+                quickStats.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>❌ حدث خطأ أثناء إنشاء التقرير</h6>
+                        <p>${error.message}</p>
+                        <button class="btn btn-sm btn-warning mt-2" onclick="generateReport()">🔄 إعادة المحاولة</button>
+                    </div>
+                `;
             }
-        }
-        
-        // حساب صافي الربح
-        const netProfit = totalProfit - totalExpenses;
-        
-        // تحويل البيانات إلى رسوم بيانية (مصفوفات)
-        const salesDates = Object.keys(salesByDate).sort();
-        const salesAmounts = salesDates.map(date => salesByDate[date]);
-        
-        const expenseDates = Object.keys(expensesByDate).sort();
-        const expenseAmounts = expenseDates.map(date => expensesByDate[date]);
-        
-        // ترتيب المنتجات الأكثر مبيعاً
-        const sortedProducts = Object.entries(topProducts)
-            .sort((a, b) => b[1].quantity - a[1].quantity)
-            .slice(0, 10); // أفضل 10 منتجات
-        
-        // ترتيب المستخدمين حسب المبيعات
-        const sortedUsers = Object.entries(salesByUser)
-            .sort((a, b) => b[1].revenue - a[1].revenue);
-        
-        // ترتيب أنواع المصاريف
-        const sortedExpenseTypes = Object.entries(expensesByType)
-            .sort((a, b) => b[1] - a[1]);
-        
-        // عرض النتائج
-        let resultsHTML = `
-            <div class="report-results">
-                <div class="alert alert-success">
-                    <h5>📊 تقرير الفترة: ${startDate} إلى ${endDate}</h5>
-                </div>
-                
-                <div class="row mb-4">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white bg-primary">
-                            <div class="card-body text-center">
-                                <h3>${totalSales.toFixed(2)}</h3>
-                                <p>إجمالي المبيعات</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white bg-success">
-                            <div class="card-body text-center">
-                                <h3>${totalProfit.toFixed(2)}</h3>
-                                <p>إجمالي الأرباح</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white bg-warning">
-                            <div class="card-body text-center">
-                                <h3>${totalExpenses.toFixed(2)}</h3>
-                                <p>إجمالي المصاريف</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white ${netProfit >= 0 ? 'bg-info' : 'bg-danger'}">
-                            <div class="card-body text-center">
-                                <h3>${netProfit.toFixed(2)}</h3>
-                                <p>صافي الربح</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6>📦 إحصائيات عامة</h6>
-                            </div>
-                            <div class="card-body">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td>عدد العناصر المباعة:</td>
-                                        <td><strong>${totalItems}</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <td>متوسط سعر البيع:</td>
-                                        <td><strong>${totalItems > 0 ? (totalSales / totalItems).toFixed(2) : 0}</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <td>متوسط ربح العنصر:</td>
-                                        <td><strong>${totalItems > 0 ? (totalProfit / totalItems).toFixed(2) : 0}</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <td>إجمالي المشتريات:</td>
-                                        <td><strong>${totalPurchases.toFixed(2)}</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <td>عدد عمليات الشراء:</td>
-                                        <td><strong>${purchasesCount}</strong></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6>📅 توزيع المبيعات حسب التاريخ</h6>
-                            </div>
-                            <div class="card-body">
-        `;
-        
-        // عرض جدول المبيعات حسب التاريخ
-        if (salesDates.length > 0) {
-            resultsHTML += `
-                <div class="table-responsive" style="max-height: 200px;">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>المبيعات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
+        };
+
+        window.exportReportToExcel = function() {
+            if (!window.currentReport) {
+                alert('❌ لا يوجد تقرير للتصدير');
+                return;
+            }
             
-            salesDates.forEach(date => {
-                resultsHTML += `
-                    <tr>
-                        <td>${date}</td>
-                        <td>${salesByDate[date].toFixed(2)}</td>
-                    </tr>
-                `;
+            const report = window.currentReport;
+            let csv = 'تقرير المبيعات والمصاريف\n\n';
+            
+            csv += `فترة التقرير:,${report.startDate} إلى ${report.endDate}\n`;
+            csv += `إجمالي المبيعات:,${report.totalSales.toFixed(2)}\n`;
+            csv += `إجمالي الأرباح:,${report.totalProfit.toFixed(2)}\n`;
+            csv += `إجمالي المصاريف:,${report.totalExpenses.toFixed(2)}\n`;
+            csv += `صافي الربح:,${report.netProfit.toFixed(2)}\n`;
+            csv += `عدد العناصر المباعة:,${report.totalItems}\n\n`;
+            
+            csv += 'المبيعات حسب التاريخ\n';
+            csv += 'التاريخ,المبلغ\n';
+            Object.entries(report.salesByDate).forEach(([date, amount]) => {
+                csv += `${date},${amount.toFixed(2)}\n`;
+            });
+            csv += '\n';
+            
+            csv += 'المنتجات الأكثر مبيعاً\n';
+            csv += 'الترتيب,اسم المنتج,الكمية,إجمالي المبيعات,إجمالي الربح\n';
+            report.topProducts.forEach(([name, data], index) => {
+                csv += `${index + 1},${name},${data.quantity},${data.revenue.toFixed(2)},${data.profit.toFixed(2)}\n`;
+            });
+            csv += '\n';
+            
+            csv += 'أداء المستخدمين\n';
+            csv += 'المستخدم,عدد المبيعات,إجمالي المبيعات,إجمالي الربح\n';
+            report.salesByUser.forEach(([user, data]) => {
+                csv += `${user},${data.salesCount},${data.revenue.toFixed(2)},${data.profit.toFixed(2)}\n`;
+            });
+            csv += '\n';
+            
+            csv += 'المصاريف حسب النوع\n';
+            csv += 'نوع المصروف,المبلغ\n';
+            report.expensesByType.forEach(([type, amount]) => {
+                csv += `${type},${amount.toFixed(2)}\n`;
             });
             
-            resultsHTML += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        } else {
-            resultsHTML += `<p class="text-muted">لا توجد بيانات مبيعات في هذه الفترة</p>`;
-        }
-        
-        resultsHTML += `
-                            </div>
-                        </div>
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `تقرير_${report.startDate}_إلى_${report.endDate}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ تم تصدير التقرير بنجاح');
+        };
+
+        window.printReport = function() {
+            const reportContent = document.querySelector('.report-results');
+            if (!reportContent) {
+                alert('❌ لا يوجد تقرير للطباعة');
+                return;
+            }
+            
+            const originalContent = document.body.innerHTML;
+            const printContent = reportContent.innerHTML;
+            
+            document.body.innerHTML = `
+                <!DOCTYPE html>
+                <html dir="rtl" lang="ar">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>تقرير المبيعات</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            padding: 20px;
+                            direction: rtl;
+                        }
+                        .alert { padding: 10px; margin: 10px 0; }
+                        .card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+                        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+                        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+                        .progress { height: 20px; background-color: #f0f0f0; }
+                        .progress-bar { height: 100%; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1 style="text-align: center;">تقرير المبيعات والمصاريف</h1>
+                    <p style="text-align: center;">${window.currentReport?.startDate || ''} إلى ${window.currentReport?.endDate || ''}</p>
+                    ${printContent}
+                    <div style="text-align: center; margin-top: 30px;">
+                        <p>تم الإنشاء في: ${new Date().toLocaleString('ar-EG')}</p>
+                        <p>برنامج الحسن للهواتف المحمولة</p>
                     </div>
-                </div>
+                </body>
+                </html>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        };
+
+        window.saveReport = function() {
+            if (!window.currentReport) {
+                alert('❌ لا يوجد تقرير للحفظ');
+                return;
+            }
+            
+            const report = window.currentReport;
+            const reportData = {
+                ...report,
+                generatedAt: new Date().toISOString(),
+                generatedBy: currentUser?.name
+            };
+            
+            const reportRef = db.ref('reports').push();
+            reportRef.set(reportData)
+                .then(() => {
+                    alert('✅ تم حفظ التقرير بنجاح في قاعدة البيانات');
+                })
+                .catch(error => {
+                    alert('❌ حدث خطأ أثناء حفظ التقرير: ' + error.message);
+                });
+        };
+
+        window.loadSavedReports = function() {
+            if (!currentUser || !currentUser.permissions.includes('reports')) {
+                alert('❌ ليس لديك صلاحية لعرض التقارير المحفوظة');
+                return;
+            }
+            
+            const savedReportsBody = document.getElementById('savedReportsBody');
+            savedReportsBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <span class="loading-spinner"></span> جاري تحميل التقارير...
+                    </td>
+                </tr>
+            `;
+            
+            db.ref('reports').once('value').then(snapshot => {
+                savedReportsBody.innerHTML = '';
                 
-                <!-- المنتجات الأكثر مبيعاً -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6>🏆 المنتجات الأكثر مبيعاً</h6>
-                            </div>
-                            <div class="card-body">
-        `;
-        
-        if (sortedProducts.length > 0) {
-            resultsHTML += `
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>اسم المنتج</th>
-                                <th>الكمية</th>
-                                <th>إجمالي المبيعات</th>
-                                <th>إجمالي الربح</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            sortedProducts.forEach(([productName, data], index) => {
-                resultsHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${productName}</td>
-                        <td>${data.quantity}</td>
-                        <td>${data.revenue.toFixed(2)}</td>
-                        <td>${data.profit.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            
-            resultsHTML += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        } else {
-            resultsHTML += `<p class="text-muted">لا توجد بيانات عن المنتجات</p>`;
-        }
-        
-        resultsHTML += `
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                if (!snapshot.exists()) {
+                    savedReportsBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">
+                                لا توجد تقارير محفوظة بعد
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
                 
-                <!-- أداء المستخدمين -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6>👥 أداء المستخدمين</h6>
-                            </div>
-                            <div class="card-body">
-        `;
-        
-        if (sortedUsers.length > 0) {
-            resultsHTML += `
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>المستخدم</th>
-                                <th>عدد المبيعات</th>
-                                <th>إجمالي المبيعات</th>
-                                <th>إجمالي الربح</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            sortedUsers.forEach(([userName, data]) => {
-                resultsHTML += `
-                    <tr>
-                        <td>${userName}</td>
-                        <td>${data.salesCount}</td>
-                        <td>${data.revenue.toFixed(2)}</td>
-                        <td>${data.profit.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            
-            resultsHTML += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        } else {
-            resultsHTML += `<p class="text-muted">لا توجد بيانات عن المستخدمين</p>`;
-        }
-        
-        resultsHTML += `
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- توزيع المصاريف -->
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h6>💸 توزيع المصاريف حسب النوع</h6>
-                            </div>
-                            <div class="card-body">
-        `;
-        
-        if (sortedExpenseTypes.length > 0) {
-            resultsHTML += `
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>نوع المصروف</th>
-                                <th>المبلغ</th>
-                                <th>النسبة</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-            
-            sortedExpenseTypes.forEach(([type, amount]) => {
-                const percentage = totalExpenses > 0 ? ((amount / totalExpenses) * 100).toFixed(1) : 0;
-                resultsHTML += `
-                    <tr>
-                        <td>${type}</td>
-                        <td>${amount.toFixed(2)}</td>
+                const reports = snapshot.val();
+                let reportsArray = [];
+                
+                for (const key in reports) {
+                    reportsArray.push({ id: key, ...reports[key] });
+                }
+                
+                reportsArray.sort((a, b) => new Date(b.generatedAt) - new Date(a.generatedAt));
+                
+                reportsArray.forEach((report, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${report.startDate} إلى ${report.endDate}</td>
+                        <td>${report.totalSales?.toFixed(2) || 0}</td>
+                        <td>${report.totalProfit?.toFixed(2) || 0}</td>
+                        <td>${report.totalExpenses?.toFixed(2) || 0}</td>
+                        <td>${report.netProfit?.toFixed(2) || 0}</td>
+                        <td>${report.generatedAt ? new Date(report.generatedAt).toLocaleString('ar-EG') : ''}</td>
                         <td>
-                            <div class="progress" style="height: 20px;">
-                                <div class="progress-bar bg-warning" style="width: ${percentage}%">${percentage}%</div>
-                            </div>
+                            <button class="btn btn-sm btn-primary me-1" onclick="viewSavedReport('${report.id}')">عرض</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteSavedReport('${report.id}')">حذف</button>
+                        </td>
+                    `;
+                    savedReportsBody.appendChild(tr);
+                });
+            }).catch(error => {
+                savedReportsBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">
+                            ❌ حدث خطأ في تحميل التقارير: ${error.message}
                         </td>
                     </tr>
                 `;
             });
-            
-            resultsHTML += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        } else {
-            resultsHTML += `<p class="text-muted">لا توجد مصاريف في هذه الفترة</p>`;
-        }
-        
-        resultsHTML += `
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- أزرار التصدير -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <button class="btn btn-success me-2" onclick="exportReportToExcel()">📄 تصدير التقرير إلى Excel</button>
-                                <button class="btn btn-primary me-2" onclick="printReport()">🖨 طباعة التقرير</button>
-                                <button class="btn btn-secondary" onclick="saveReport()">💾 حفظ التقرير</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        quickStats.innerHTML = resultsHTML;
-        
-        // حفظ بيانات التقرير للاستخدام لاحقاً
-        window.currentReport = {
-            startDate,
-            endDate,
-            totalSales,
-            totalProfit,
-            totalExpenses,
-            netProfit,
-            totalItems,
-            totalPurchases,
-            purchasesCount,
-            salesByDate,
-            topProducts: sortedProducts,
-            salesByUser: sortedUsers,
-            expensesByType: sortedExpenseTypes
         };
-        
-    } catch (error) {
-        console.error('خطأ في إنشاء التقرير:', error);
-        quickStats.innerHTML = `
-            <div class="alert alert-danger">
-                <h6>❌ حدث خطأ أثناء إنشاء التقرير</h6>
-                <p>${error.message}</p>
-                <button class="btn btn-sm btn-warning mt-2" onclick="generateReport()">🔄 إعادة المحاولة</button>
-            </div>
-        `;
-    }
-};
 
-// ==================== دوال مساعدة للتقارير ====================
-
-window.exportReportToExcel = function() {
-    if (!window.currentReport) {
-        alert('❌ لا يوجد تقرير للتصدير');
-        return;
-    }
-    
-    const report = window.currentReport;
-    let csv = 'تقرير المبيعات والمصاريف\n\n';
-    
-    // معلومات التقرير الأساسية
-    csv += `فترة التقرير:,${report.startDate} إلى ${report.endDate}\n`;
-    csv += `إجمالي المبيعات:,${report.totalSales.toFixed(2)}\n`;
-    csv += `إجمالي الأرباح:,${report.totalProfit.toFixed(2)}\n`;
-    csv += `إجمالي المصاريف:,${report.totalExpenses.toFixed(2)}\n`;
-    csv += `صافي الربح:,${report.netProfit.toFixed(2)}\n`;
-    csv += `عدد العناصر المباعة:,${report.totalItems}\n\n`;
-    
-    // المبيعات حسب التاريخ
-    csv += 'المبيعات حسب التاريخ\n';
-    csv += 'التاريخ,المبلغ\n';
-    Object.entries(report.salesByDate).forEach(([date, amount]) => {
-        csv += `${date},${amount.toFixed(2)}\n`;
-    });
-    csv += '\n';
-    
-    // المنتجات الأكثر مبيعاً
-    csv += 'المنتجات الأكثر مبيعاً\n';
-    csv += 'الترتيب,اسم المنتج,الكمية,إجمالي المبيعات,إجمالي الربح\n';
-    report.topProducts.forEach(([name, data], index) => {
-        csv += `${index + 1},${name},${data.quantity},${data.revenue.toFixed(2)},${data.profit.toFixed(2)}\n`;
-    });
-    csv += '\n';
-    
-    // أداء المستخدمين
-    csv += 'أداء المستخدمين\n';
-    csv += 'المستخدم,عدد المبيعات,إجمالي المبيعات,إجمالي الربح\n';
-    report.salesByUser.forEach(([user, data]) => {
-        csv += `${user},${data.salesCount},${data.revenue.toFixed(2)},${data.profit.toFixed(2)}\n`;
-    });
-    csv += '\n';
-    
-    // المصاريف حسب النوع
-    csv += 'المصاريف حسب النوع\n';
-    csv += 'نوع المصروف,المبلغ\n';
-    report.expensesByType.forEach(([type, amount]) => {
-        csv += `${type},${amount.toFixed(2)}\n`;
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `تقرير_${report.startDate}_إلى_${report.endDate}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    alert('✅ تم تصدير التقرير بنجاح');
-};
-
-window.printReport = function() {
-    const reportContent = document.querySelector('.report-results');
-    if (!reportContent) {
-        alert('❌ لا يوجد تقرير للطباعة');
-        return;
-    }
-    
-    const originalContent = document.body.innerHTML;
-    const printContent = reportContent.innerHTML;
-    
-    document.body.innerHTML = `
-        <!DOCTYPE html>
-        <html dir="rtl" lang="ar">
-        <head>
-            <meta charset="UTF-8">
-            <title>تقرير المبيعات</title>
-            <style>
-                body {
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    padding: 20px;
-                    direction: rtl;
-                }
-                .alert { padding: 10px; margin: 10px 0; }
-                .card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
-                table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-                th, td { border: 1px solid #000; padding: 5px; text-align: center; }
-                .progress { height: 20px; background-color: #f0f0f0; }
-                .progress-bar { height: 100%; }
-                @media print {
-                    .no-print { display: none; }
-                }
-            </style>
-        </head>
-        <body>
-            <h1 style="text-align: center;">تقرير المبيعات والمصاريف</h1>
-            <p style="text-align: center;">${window.currentReport?.startDate || ''} إلى ${window.currentReport?.endDate || ''}</p>
-            ${printContent}
-            <div style="text-align: center; margin-top: 30px;">
-                <p>تم الإنشاء في: ${new Date().toLocaleString('ar-EG')}</p>
-                <p>برنامج الحسن للهواتف المحمولة</p>
-            </div>
-        </body>
-        </html>
-    `;
-    
-    window.print();
-    document.body.innerHTML = originalContent;
-    location.reload();
-};
-
-window.saveReport = function() {
-    if (!window.currentReport) {
-        alert('❌ لا يوجد تقرير للحفظ');
-        return;
-    }
-    
-    const report = window.currentReport;
-    const reportData = {
-        ...report,
-        generatedAt: new Date().toISOString(),
-        generatedBy: currentUser?.name
-    };
-    
-    // حفظ التقرير في Firebase
-    const reportRef = db.ref('reports').push();
-    reportRef.set(reportData)
-        .then(() => {
-            alert('✅ تم حفظ التقرير بنجاح في قاعدة البيانات');
-        })
-        .catch(error => {
-            alert('❌ حدث خطأ أثناء حفظ التقرير: ' + error.message);
-        });
-};
-
-// ==================== تحديث قسم التقارير في HTML ====================
-
-// استبدل قسم التقارير الحالي بالكود التالي:
-document.querySelector('#panel-stats .floating-panel-body').innerHTML = `
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>📈 إنشاء تقرير متقدم</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="reportStartDate" class="form-label">من تاريخ</label>
-                            <input type="date" class="form-control" id="reportStartDate" 
-                                   value="${new Date().toISOString().split('T')[0]}">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="reportEndDate" class="form-label">إلى تاريخ</label>
-                            <input type="date" class="form-control" id="reportEndDate" 
-                                   value="${new Date().toISOString().split('T')[0]}">
-                        </div>
-                    </div>
+        window.viewSavedReport = function(reportId) {
+            db.ref('reports/' + reportId).once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    const report = snapshot.val();
+                    window.currentReport = report;
                     
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-primary" onclick="generateReport()">
-                                    🔍 إنشاء تقرير متقدم
-                                </button>
-                                <button class="btn btn-secondary" onclick="loadSavedReports()">
-                                    📚 التقارير المحفوظة
-                                </button>
+                    const quickStats = document.getElementById('quickStats');
+                    let resultsHTML = `
+                        <div class="alert alert-info">
+                            <h5>📋 تقرير محفوظ - ${report.startDate} إلى ${report.endDate}</h5>
+                            <p>تم الإنشاء بواسطة: ${report.generatedBy || 'غير معروف'}</p>
+                            <p>تاريخ الإنشاء: ${report.generatedAt ? new Date(report.generatedAt).toLocaleString('ar-EG') : ''}</p>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white bg-primary">
+                                    <div class="card-body text-center">
+                                        <h3>${report.totalSales?.toFixed(2) || 0}</h3>
+                                        <p>إجمالي المبيعات</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white bg-success">
+                                    <div class="card-body text-center">
+                                        <h3>${report.totalProfit?.toFixed(2) || 0}</h3>
+                                        <p>إجمالي الأرباح</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white bg-warning">
+                                    <div class="card-body text-center">
+                                        <h3>${report.totalExpenses?.toFixed(2) || 0}</h3>
+                                        <p>إجمالي المصاريف</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="card text-white ${(report.netProfit || 0) >= 0 ? 'bg-info' : 'bg-danger'}">
+                                    <div class="card-body text-center">
+                                        <h3>${report.netProfit?.toFixed(2) || 0}</h3>
+                                        <p>صافي الربح</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        
+                        <div class="text-center">
+                            <button class="btn btn-success me-2" onclick="exportReportToExcel()">📄 تصدير</button>
+                            <button class="btn btn-primary" onclick="printReport()">🖨 طباعة</button>
+                        </div>
+                    `;
                     
-                    <div id="quickStats">
-                        <div class="alert alert-light">
-                            <h6>تعليمات:</h6>
-                            <ol class="mb-0">
-                                <li>اختر تاريخ البدء وتاريخ الانتهاء</li>
-                                <li>اضغط على "إنشاء تقرير متقدم"</li>
-                                <li>سيعرض النظام تقريراً شاملاً يشمل:
-                                    <ul>
-                                        <li>المبيعات والأرباح</li>
-                                        <li>المصاريف وصافي الربح</li>
-                                        <li>المنتجات الأكثر مبيعاً</li>
-                                        <li>أداء المستخدمين</li>
-                                        <li>توزيع المصاريف</li>
-                                    </ul>
-                                </li>
-                                <li>يمكنك تصدير التقرير أو طباعته أو حفظه</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- التقارير المحفوظة -->
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>📚 التقارير المحفوظة</h5>
-                </div>
-                <div class="card-body">
-                    <div id="savedReportsList" class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>الفترة</th>
-                                    <th>المبيعات</th>
-                                    <th>الأرباح</th>
-                                    <th>المصاريف</th>
-                                    <th>صافي الربح</th>
-                                    <th>تاريخ الإنشاء</th>
-                                    <th>إدارة</th>
-                                </tr>
-                            </thead>
-                            <tbody id="savedReportsBody">
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">
-                                        جاري تحميل التقارير المحفوظة...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-`;
+                    quickStats.innerHTML = resultsHTML;
+                } else {
+                    alert('❌ التقرير غير موجود');
+                }
+            });
+        };
 
-// ==================== تحميل التقارير المحفوظة ====================
-
-window.loadSavedReports = function() {
-    if (!currentUser || !currentUser.permissions.includes('reports')) {
-        alert('❌ ليس لديك صلاحية لعرض التقارير المحفوظة');
-        return;
-    }
-    
-    const savedReportsBody = document.getElementById('savedReportsBody');
-    savedReportsBody.innerHTML = `
-        <tr>
-            <td colspan="7" class="text-center">
-                <span class="loading-spinner"></span> جاري تحميل التقارير...
-            </td>
-        </tr>
-    `;
-    
-    db.ref('reports').once('value').then(snapshot => {
-        savedReportsBody.innerHTML = '';
-        
-        if (!snapshot.exists()) {
-            savedReportsBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center text-muted">
-                        لا توجد تقارير محفوظة بعد
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-        
-        const reports = snapshot.val();
-        let reportsArray = [];
-        
-        for (const key in reports) {
-            reportsArray.push({ id: key, ...reports[key] });
-        }
-        
-        // ترتيب التقارير من الأحدث إلى الأقدم
-        reportsArray.sort((a, b) => new Date(b.generatedAt) - new Date(a.generatedAt));
-        
-        reportsArray.forEach((report, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${report.startDate} إلى ${report.endDate}</td>
-                <td>${report.totalSales?.toFixed(2) || 0}</td>
-                <td>${report.totalProfit?.toFixed(2) || 0}</td>
-                <td>${report.totalExpenses?.toFixed(2) || 0}</td>
-                <td>${report.netProfit?.toFixed(2) || 0}</td>
-                <td>${report.generatedAt ? new Date(report.generatedAt).toLocaleString('ar-EG') : ''}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary me-1" onclick="viewSavedReport('${report.id}')">عرض</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteSavedReport('${report.id}')">حذف</button>
-                </td>
-            `;
-            savedReportsBody.appendChild(tr);
-        });
-    }).catch(error => {
-        savedReportsBody.innerHTML = `
-            <tr>
-                <td colspan="7" class="text-center text-danger">
-                    ❌ حدث خطأ في تحميل التقارير: ${error.message}
-                </td>
-            </tr>
-        `;
-    });
-};
-
-window.viewSavedReport = function(reportId) {
-    db.ref('reports/' + reportId).once('value').then(snapshot => {
-        if (snapshot.exists()) {
-            const report = snapshot.val();
-            window.currentReport = report;
+        window.deleteSavedReport = function(reportId) {
+            if (!confirm('هل تريد حذف هذا التقرير؟')) return;
             
-            // عرض التقرير
-            const quickStats = document.getElementById('quickStats');
-            let resultsHTML = `
-                <div class="alert alert-info">
-                    <h5>📋 تقرير محفوظ - ${report.startDate} إلى ${report.endDate}</h5>
-                    <p>تم الإنشاء بواسطة: ${report.generatedBy || 'غير معروف'}</p>
-                    <p>تاريخ الإنشاء: ${report.generatedAt ? new Date(report.generatedAt).toLocaleString('ar-EG') : ''}</p>
-                </div>
-                
-                <div class="row mb-4">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white bg-primary">
-                            <div class="card-body text-center">
-                                <h3>${report.totalSales?.toFixed(2) || 0}</h3>
-                                <p>إجمالي المبيعات</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white bg-success">
-                            <div class="card-body text-center">
-                                <h3>${report.totalProfit?.toFixed(2) || 0}</h3>
-                                <p>إجمالي الأرباح</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white bg-warning">
-                            <div class="card-body text-center">
-                                <h3>${report.totalExpenses?.toFixed(2) || 0}</h3>
-                                <p>إجمالي المصاريف</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card text-white ${(report.netProfit || 0) >= 0 ? 'bg-info' : 'bg-danger'}">
-                            <div class="card-body text-center">
-                                <h3>${report.netProfit?.toFixed(2) || 0}</h3>
-                                <p>صافي الربح</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center">
-                    <button class="btn btn-success me-2" onclick="exportReportToExcel()">📄 تصدير</button>
-                    <button class="btn btn-primary" onclick="printReport()">🖨 طباعة</button>
-                </div>
-            `;
-            
-            quickStats.innerHTML = resultsHTML;
-        } else {
-            alert('❌ التقرير غير موجود');
-        }
-    });
-};
+            db.ref('reports/' + reportId).remove()
+                .then(() => {
+                    alert('✅ تم حذف التقرير بنجاح');
+                    loadSavedReports();
+                })
+                .catch(error => {
+                    alert('❌ حدث خطأ أثناء حذف التقرير: ' + error.message);
+                });
+        };
 
-window.deleteSavedReport = function(reportId) {
-    if (!confirm('هل تريد حذف هذا التقرير؟')) return;
-    
-    db.ref('reports/' + reportId).remove()
-        .then(() => {
-            alert('✅ تم حذف التقرير بنجاح');
-            loadSavedReports();
-        })
-        .catch(error => {
-            alert('❌ حدث خطأ أثناء حذف التقرير: ' + error.message);
+        document.getElementById('panel-stats').addEventListener('click', function(e) {
+            if (e.target === this) return;
+            setTimeout(() => {
+                if (document.getElementById('panel-stats').style.display === 'flex') {
+                    loadSavedReports();
+                }
+            }, 100);
         });
-};
 
-// تحميل التقارير المحفوظة تلقائياً عند فتح نافذة التقارير
-document.getElementById('panel-stats').addEventListener('click', function(e) {
-    if (e.target === this) return;
-    setTimeout(() => {
-        if (document.getElementById('panel-stats').style.display === 'flex') {
-            loadSavedReports();
-        }
-    }, 100);
-});
+        setTimeout(loadSavedReports, 2000);
 
-// تحميل التقارير المحفوظة عند بدء التشغيل
-setTimeout(loadSavedReports, 2000);
         // ==================== الأصوات ====================
 
         function playSaleSound() {
             try {
-                // إنشاء صوت بسيط باستخدام Web Audio API
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
@@ -2907,7 +2823,6 @@ setTimeout(loadSavedReports, 2000);
             
             const backupData = {};
             
-            // إظهار مؤشر التحميل
             const originalText = this.innerHTML;
             this.innerHTML = '<span class="loading-spinner"></span> جاري إنشاء النسخ الاحتياطي...';
             this.disabled = true;
@@ -2930,7 +2845,6 @@ setTimeout(loadSavedReports, 2000);
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                // إعادة الزر إلى حالته الأصلية
                 this.innerHTML = originalText;
                 this.disabled = false;
                 
@@ -2959,7 +2873,6 @@ setTimeout(loadSavedReports, 2000);
             
             if (!confirm('⚠️ تحذير: سيتم حذف جميع سجلات المبيعات (لن يتم حذف المنتجات)، هل أنت متأكد؟')) return;
 
-            // إظهار مؤشر التحميل
             const originalText = this.innerHTML;
             this.innerHTML = '<span class="loading-spinner"></span> جاري التصفير...';
             this.disabled = true;
@@ -2983,7 +2896,6 @@ setTimeout(loadSavedReports, 2000);
             const now = new Date();
             const todayKey = now.toISOString().split('T')[0];
             
-            // حساب صافي الربح بعد المصاريف
             db.ref('expenses/' + todayKey).once('value', expSnapshot => {
                 let expensesTotal = 0;
                 if (expSnapshot.exists()) {
@@ -3004,7 +2916,6 @@ setTimeout(loadSavedReports, 2000);
                     
                     const netProfit = profitTotal - expensesTotal;
                     
-                    // عرض صافي الربح في كرت جديد
                     const netProfitContainer = document.getElementById('netProfitContainer');
                     netProfitContainer.innerHTML = `
                         <div class="row mb-3">
@@ -3020,12 +2931,10 @@ setTimeout(loadSavedReports, 2000);
             });
         }
 
-        // تشغيل الإحصائيات المتقدمة كل دقيقة
         setInterval(loadAdvancedStats, 60000);
 
         // ==================== دوال مساعدة ====================
 
-        // تحديث التاريخ والوقت في الهيدر
         function updateDateTime() {
             const now = new Date();
             const options = {
@@ -3116,7 +3025,6 @@ setTimeout(loadSavedReports, 2000);
 
         // ==================== بدء تشغيل النظام ====================
 
-        // بدء تشغيل نظام تسجيل الدخول
         initLoginSystem();
     </script>
 </body>
