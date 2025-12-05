@@ -735,7 +735,6 @@
                     <span class="floating-panel-title">إدارة المبيعات</span>
                     <button class="floating-panel-close" data-close-panel>&times;</button>
                 </div>
-                <div class="floating-panel-body">
                     <div class="row">
                         <!-- فورم بيع منتج -->
                         <div class="col-lg-4">
@@ -920,15 +919,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- نافذة عائمة للتقارير -->
-        <div class="floating-panel-backdrop" id="panel-stats">
-            <div class="floating-panel">
-                <div class="floating-panel-header">
-                    <span class="floating-panel-title">التقارير والإحصائيات</span>
-                    <button class="floating-panel-close" data-close-panel>&times;</button>
-                </div>
-                <div class="floating-panel-body">
+           <div class="floating-panel-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="card">
@@ -1990,37 +1981,7 @@
             setTimeout(() => {
                 location.reload();
             }, 100);
-        };
-
-        // ==================== التقارير ====================
-
-        window.generateReport = function() {
-            if (!currentUser || !currentUser.permissions.includes('reports')) {
-                alert('❌ ليس لديك صلاحية لإنشاء التقارير');
-                return;
-            }
-            
-            const startDate = document.getElementById('reportStartDate').value;
-            const endDate = document.getElementById('reportEndDate').value;
-            
-            if (!startDate || !endDate) {
-                alert('الرجاء تحديد تاريخ البدء والانتهاء');
-                return;
-            }
-            
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            
-            if (start > end) {
-                alert('تاريخ البدء يجب أن يكون قبل تاريخ الانتهاء');
-                return;
-            }
-            
-            // جلب بيانات المبيعات في الفترة
-            let totalSales = 0;
-            let totalProfit = 0;
-            let totalItems = 0;
-    
+        };    
 window.generateReport = async function() {
     if (!currentUser || !currentUser.permissions.includes('reports')) {
         alert('❌ ليس لديك صلاحية لإنشاء التقارير');
