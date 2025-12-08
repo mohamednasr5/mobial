@@ -72,7 +72,7 @@
         .stat-card-2 { background: linear-gradient(135deg, #2980b9, #3498db); }
         .stat-card-3 { background: linear-gradient(135deg, #e67e22, #f39c12); }
         .stat-card-4 { background: linear-gradient(135deg, #c0392b, #e74c3c); }
-        .stat-card-5 { background: linear-gradient(135deg, #8e44ad, #9b59b6); }
+        .stat-card-5 { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
 
         .stat-card h2 {
             margin: 0;
@@ -525,6 +525,16 @@
                     <div class="stat-card stat-card-4">
                         <h2 id="lowStockCount">0</h2>
                         <p>أوشكت على النفاد</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- كرت جديد: إجمالي المبيعات اليوم -->
+            <div class="row mb-3 justify-content-center">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stat-card stat-card-5">
+                        <h2 id="todayTotalSales">0</h2>
+                        <p>إجمالي المبيعات اليوم</p>
                     </div>
                 </div>
             </div>
@@ -1643,6 +1653,7 @@
                 
                 let todayProfit = 0;
                 let todayQty = 0;
+                let todayTotalSales = 0; // إجمالي المبيعات اليوم
 
                 if (snapshot.exists()) {
                     const sales = snapshot.val();
@@ -1650,6 +1661,7 @@
                         const s = sales[key];
                         todayProfit += s.profit || 0;
                         todayQty += s.qty || 0;
+                        todayTotalSales += s.totalSale || 0; // حساب إجمالي المبيعات
 
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
@@ -1668,6 +1680,7 @@
 
                 document.getElementById('todayProfit').textContent = todayProfit.toFixed(2);
                 document.getElementById('todaySoldQty').textContent = todayQty;
+                document.getElementById('todayTotalSales').textContent = todayTotalSales.toFixed(2); // تحديث الكارت الجديد
             });
         }
 
