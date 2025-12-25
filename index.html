@@ -656,7 +656,9 @@
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <label class="form-label">كود/اسم المنتج</label>
-                                        <input type="text" class="form-control" id="quickSaleSearch" placeholder="ابحث بالكود أو الاسم">
+                                        <input type="text" class="form-control" id="quickSaleSearch" 
+                                               placeholder="ابدأ بكتابة اسم المنتج للبحث" list="productSuggestions">
+                                        <datalist id="productSuggestions"></datalist>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">الكمية</label>
@@ -1356,12 +1358,15 @@
                                     <form id="saleForm">
                                         <div class="mb-3">
                                             <label for="saleBarcode" class="form-label">كود المنتج</label>
-                                            <input type="text" class="form-control" id="saleBarcode" placeholder="اكتب الكود يدويًا">
+                                            <input type="text" class="form-control" id="saleBarcode" placeholder="سيتم تعبئته تلقائياً" readonly>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="saleProductName" class="form-label">اسم المنتج</label>
-                                            <input type="text" class="form-control" id="saleProductName" readonly>
+                                            <input type="text" class="form-control" id="saleProductName" 
+                                                   placeholder="ابدأ بكتابة اسم المنتج" list="productSuggestionsSale" 
+                                                   autocomplete="off">
+                                            <datalist id="productSuggestionsSale"></datalist>
                                         </div>
 
                                         <div class="row mb-3">
@@ -1598,6 +1603,72 @@
             loadSavedReports();
         }
 
+        // ==================== تحديث قوائم المنتجات المقترحة ====================
+
+        function updateProductSuggestions() {
+            const datalist = document.getElementById('productSuggestions');
+            const datalistSale = document.getElementById('productSuggestionsSale');
+            
+            if (datalist) datalist.innerHTML = '';
+            if (datalistSale) datalistSale.innerHTML = '';
+            
+            productsCache.forEach(product => {
+                const option = document.createElement('option');
+                const option2 = document.createElement('option');
+                const displayText = `${product.name} - ${product.barcode || 'بدون كود'} (المخزون: ${product.qty})`;
+                
+                option.value = displayText;
+                option.dataset.barcode = product.barcode;
+                option.dataset.name = product.name;
+                
+                option2.value = displayText;
+                option2.dataset.barcode = product.barcode;
+                option2.dataset.name = product.name;
+                
+                if (datalist) datalist.appendChild(option);
+                if (datalistSale) datalistSale.appendChild(option2);
+            });
+        }
+
+        // استخراج الباركود من النص المختار
+        function extractBarcodeFromSelection(selectedText) {
+            const product = productsCache.find(p => 
+                selectedText.includes(p.name) && 
+                (selectedText.includes(p.barcode) || !p.barcode)
+            );
+            return product ? product.barcode : null;
+        }
+
+        // عندما يتم اختيار منتج من القائمة في فاتورة سريعة
+        document.getElementById('quickSaleSearch')?.addEventListener('change', function() {
+            const selectedValue = this.value;
+            const barcode = extractBarcodeFromSelection(selectedValue);
+            
+            if (barcode) {
+                const product = productsCache.find(p => p.barcode === barcode);
+                if (product) {
+                    document.getElementById('quickSalePrice').value = product.cost;
+                    this.value = product.name; // عرض الاسم فقط
+                }
+            }
+        });
+
+        // عند تغيير المنتج في نافذة البيع
+        document.getElementById('saleProductName')?.addEventListener('change', function() {
+            const selectedValue = this.value;
+            const barcode = extractBarcodeFromSelection(selectedValue);
+            
+            if (barcode) {
+                loadProductByBarcode(barcode);
+                const product = productsCache.find(p => p.barcode === barcode);
+                if (product) {
+                    document.getElementById('salePrice').value = product.cost;
+                    document.getElementById('saleBarcode').value = barcode;
+                    this.value = product.name; // عرض الاسم فقط
+                }
+            }
+        });
+
         // ==================== المنتجات والمخزون ====================
 
         function loadProducts() {
@@ -1633,6 +1704,9 @@
                 document.getElementById('totalProducts').textContent = totalProducts;
                 document.getElementById('lowStockCount').textContent = lowStockCount;
                 document.getElementById('totalInventoryValue').textContent = totalInventoryValue.toFixed(2);
+                
+                // تحديث القوائم المقترحة
+                updateProductSuggestions();
             });
         }
 
@@ -1803,11 +1877,6 @@
             document.getElementById('saleAvailableQty').value = p.qty;
             return true;
         }
-
-        document.getElementById('saleBarcode')?.addEventListener('change', function() {
-            const barcode = document.getElementById('saleBarcode').value.trim();
-            if (barcode) loadProductByBarcode(barcode);
-        });
 
         // تسجيل عملية البيع
         document.getElementById('saleForm')?.addEventListener('submit', function(e) {
@@ -1996,7 +2065,17 @@
                 return;
             }
 
-            const product = productsCache.find(p => p.barcode === search || p.name.includes(search));
+            // استخراج الباركود من النص
+            const barcode = extractBarcodeFromSelection(search);
+            const productName = search.split(' - ')[0]; // أخذ الجزء الأول (اسم المنتج)
+
+            let product;
+            if (barcode) {
+                product = productsCache.find(p => p.barcode === barcode);
+            } else {
+                product = productsCache.find(p => p.name.includes(productName));
+            }
+
             if (!product) {
                 alert('المنتج غير موجود');
                 return;
